@@ -1,0 +1,6 @@
+authors = ["caseykneale "]
+name = "SMILES"
+uuid = "c7c48b62-dc7c-11e9-1ef5-6fb8e70241de"
+version = "0.1.0"
+
+[deps]
