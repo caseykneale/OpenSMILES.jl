@@ -276,10 +276,13 @@ function ParseSMILES( S::String )
                 S = S[ 2 : end ]
             end
             if cursor == ')'
-                S = S[ 2 : end ]
-                nextedgestart = pop!( chainstack )
-                lastcursor = nextedgestart
-                println(nextedgestart)
+                if length(chainstack) > 0
+                    S = S[ 2 : end ]
+                    nextedgestart = pop!( chainstack )
+                    lastcursor = nextedgestart
+                else
+                    @warn("Invalid SMILES. Parenthesis/chain does not have a beginning.")
+                end
             end
         elseif isbondoperator(cursor) #Handle bonds
             weight = bonds[ string(cursor) ]
@@ -327,7 +330,6 @@ S = "C1CCCCC1C1CCCCC1" #2 cyclohexanes bridged
 #S = "C1CCC2(C1)CCCC2"
 #S = "C12(C(CCC)CCCC1)CCCCC2"
 #S = "C[CH4+](OC(OCC)CC)CC"
-ParseBracket("C-")
 MoleculeGraph, MolecularData = ParseSMILES( "OS(=O)(=S)O" )
 gplot( Graph( adjacency_matrix( MoleculeGraph ) ) )
 println("Wuh")
