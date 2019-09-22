@@ -184,7 +184,7 @@ function ParseBracket(S)
             end
         #Handle charge
         elseif ispm(cursor)
-            if ( state == CHARGE ) || ( state == MULTIPLICITY ) || ( state == SYMBOL )
+            if ( state == CHARGE ) || ( state == MULTIPLICITY ) || ( state == SYMBOL ) || ( state == ISOTOPE )
                 charge, S = ReadNextCharge( S )
                 state = SYMBOL
             else
@@ -207,6 +207,8 @@ function ParseBracket(S)
 end
 
 ParseBracket("22NaH")
+ParseBracket("O-")
+
 
 struct SMILESParseException <: Exception
     charloc::Int64
@@ -226,6 +228,7 @@ function ParseSMILES( S::String )
 
     nextedgestart = 0
     weight = 1
+    lastcursor = 0
     # symbol, isotope, aromatic, ringID, hydrogens, charge = nothing, nothing, false, nothing, 0, 0
     RingClosures = Dict()
 
@@ -265,12 +268,18 @@ function ParseSMILES( S::String )
                 end
             end
             if cursor == '('
-                push!( chainstack, length( MolecularData )  )
+                if lastcursor == 0
+                    push!( chainstack, length( MolecularData )  )
+                else
+                    push!( chainstack, lastcursor  )
+                end
                 S = S[ 2 : end ]
             end
             if cursor == ')'
                 S = S[ 2 : end ]
                 nextedgestart = pop!( chainstack )
+                lastcursor = nextedgestart
+                println(nextedgestart)
             end
         elseif isbondoperator(cursor) #Handle bonds
             weight = bonds[ string(cursor) ]
@@ -278,6 +287,7 @@ function ParseSMILES( S::String )
         end
         #New atom/moiety was parsed
         if isa( moiety, Element )
+            lastcursor = 0
             add_vertex!( MoleculeGraph )
             push!( MolecularData, moiety )
             len = length( MolecularData )
@@ -317,9 +327,7 @@ S = "C1CCCCC1C1CCCCC1" #2 cyclohexanes bridged
 #S = "C1CCC2(C1)CCCC2"
 #S = "C12(C(CCC)CCCC1)CCCCC2"
 #S = "C[CH4+](OC(OCC)CC)CC"
-
-MoleculeGraph, MolecularData = ParseSMILES( S )
-
-S
+ParseBracket("C-")
+MoleculeGraph, MolecularData = ParseSMILES( "OS(=O)(=S)O" )
 gplot( Graph( adjacency_matrix( MoleculeGraph ) ) )
 println("Wuh")
