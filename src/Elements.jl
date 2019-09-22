@@ -1,5 +1,5 @@
 bondoperators = ["@", "-", "\\", "/", "=", "#", "\$"];
-specialoperators = [ ".", "]", "["];
+specialoperators = [ ".", "]", "[", "(", ")"];
 operators = [ specialoperators;  bondoperators ];
 
 bonds = Dict( "-" => 1, "\\" => 1, "/" => 1, "=" => 2, "#" => 3, "\$" => 4 );
@@ -121,13 +121,21 @@ struct BracketParseException <: Exception
 end
 Base.showerror(io::IO, e::BracketParseException) = print(io, "Failed to parse bracket(\"[$(e.bracketcontents)]\") on character ", e.charloc, "!")
 
-struct Element
+mutable struct Element
     symbol::String
     isotope::Union{Int16, Nothing}
     aromatic::Bool
     ringID::Union{Int16, Nothing}
     explicithydrogens::Int8
     charge::Int8
+end
+
+function Element(symbol::String)
+    if islowercase(symbol[1])
+        return Element(uppercasefirst(symbol), nothing, true, nothing, 0, 0 )
+    else
+        return Element(symbol, nothing, false, nothing, 0, 0 )
+    end
 end
 
 function ParseBracket(S)
@@ -159,6 +167,9 @@ function ParseBracket(S)
                     symbollist = isuppercase( cursor ) ? bracket : bracket_aromatic
                     aromatic = islowercase( cursor )
                     symbol, S = ReadNextElement( S, symbollist )
+                    if isa(symbol, nothing)
+                        @warn("Invalid SMILES. Unrecognized chemical symbol.")
+                    end
                 elseif S[1] == 'H'
                     state = MULTIPLICITY
                     hydrogens = 1
@@ -193,5 +204,107 @@ function ParseBracket(S)
     return Element( symbol, isotope, aromatic, ringID, hydrogens, charge )
 end
 
+ParseBracket("22NaH")
 
-ParseBracket("22NaH+1")
+@enum SMILESState begin
+    SKELETON = Int8(1)
+    CYCLE = Int8(2)
+    CHAIN = Int8(3)
+end
+
+struct SMILESParseException <: Exception
+    charloc::Int64
+end
+Base.showerror(io::IO, e::BracketParseException) = print(io, "Failed to parse bracket on character ", e.charloc, "!")
+using Pkg
+using LightGraphs
+using GraphPlot
+using Compose
+#Parse SMILES - whew here goes...
+
+MoleculeGraph = SimpleGraph()
+MolecularData = Element[]
+
+S = "CC(OCC(OCC)CC)CC"
+Sorig = deepcopy(S)
+origlen = length(S)
+curlen = deepcopy(origlen)
+lastlen = deepcopy(origlen)
+
+chainstack = Int16[]
+
+state = SKELETON
+nextedgestart = 0
+symbol, isotope, aromatic, ringID, hydrogens, charge = nothing, nothing, false, nothing, 0, 0
+
+while curlen > 0
+    moiety = nothing
+    unbrokenchain = true
+    cursor = S[1]
+
+    if isdigit( cursor )  #Handle rings
+
+    elseif isletter( cursor )
+        symbollist = isuppercase( cursor ) ? aliphatics : aromatics
+        aromatic = islowercase( cursor )
+        symbol, S = ReadNextElement( S, symbollist )
+        if isa(symbol, Nothing)
+            @warn("Invalid SMILES. Unrecognized chemical symbol.")
+        else
+            moiety = Element(symbol)
+        end
+    elseif isspecialoperator(cursor)    #Handle operators
+        if cursor == '['
+            BracketClose = findfirst( S .== "]" ) - 1
+            if (BracketClose > 0) & !isa(BrackClose, Nothing)
+                moiety = ParseBracket( S[ 1 : BracketClose ] )
+                S = S[ (BracketClose+1) : end]
+            else
+                @warn("Invalid SMILES. Bracket is either empty, or does not end.")
+            end
+        end
+        if cursor == '('
+            push!( chainstack, length( MolecularData ) + 1 )
+            S = S[ 2 : end ]
+        end
+        if cursor == ')'
+            S = S[ 2 : end ]
+            nextedgestart = pop!( chainstack )
+            unbrokenchain = false #Lift pen
+        end
+    elseif isbondoperator(cursor) #Handle bonds
+
+    end
+
+    #New atom/moiety was parsed
+    if isa( moiety, Element )
+        add_vertex!( MoleculeGraph )
+        push!( MolecularData, moiety )
+        len = length( MolecularData )
+        if (len > 1)
+            if unbrokenchain
+                if nextedgestart == 0
+                    add_edge!(MoleculeGraph, len - 1, len )
+                else
+                    add_edge!(MoleculeGraph, nextedgestart, len )
+                    nextedgestart = 0
+                end
+            else
+                add_edge!(MoleculeGraph, len - 1, len )
+                unbrokenchain = true
+            end
+        end
+    end
+
+    #Ensure we don't get stuck in an infinite loop
+    curlen = length( S )
+    if lastlen == curlen
+        throw(SMILESParseException( (origlen - curlen + 1) ))
+    end
+    lastlen = curlen
+end
+
+
+Sorig
+gplot(MoleculeGraph)
+println("Wuh")
