@@ -125,16 +125,16 @@ mutable struct Element
     symbol::String
     isotope::Union{Int16, Nothing}
     aromatic::Bool
-    ringID::Union{Int16, Nothing}
+    ringID::Array{Int16,1}
     explicithydrogens::Int8
     charge::Int8
 end
 
 function Element(symbol::String)
     if islowercase(symbol[1])
-        return Element(uppercasefirst(symbol), nothing, true, nothing, 0, 0 )
+        return Element(uppercasefirst(symbol), nothing, true, [], 0, 0 )
     else
-        return Element(symbol, nothing, false, nothing, 0, 0 )
+        return Element(symbol, nothing, false, [], 0, 0 )
     end
 end
 
@@ -145,7 +145,7 @@ function ParseBracket(S)
     lastlen = deepcopy(origlen)
 
     state = ISOTOPE
-    symbol, isotope, aromatic, ringID, hydrogens, charge = nothing, nothing, false, nothing, 0, 0
+    symbol, isotope, aromatic, ringID, hydrogens, charge = nothing, nothing, false, [], 0, 0
 
     while curlen > 0
         cursor = S[1]
@@ -206,23 +206,17 @@ end
 
 ParseBracket("22NaH")
 
-@enum SMILESState begin
-    SKELETON = Int8(1)
-    CYCLE = Int8(2)
-    CHAIN = Int8(3)
-end
-
 struct SMILESParseException <: Exception
     charloc::Int64
 end
 Base.showerror(io::IO, e::BracketParseException) = print(io, "Failed to parse bracket on character ", e.charloc, "!")
-using Pkg
+
+using SimpleWeightedGraphs
 using LightGraphs
 using GraphPlot
 using Compose
 #Parse SMILES - whew here goes...
-
-MoleculeGraph = SimpleGraph()
+MoleculeGraph = SimpleGraph()#SimpleWeightedGraph();
 MolecularData = Element[]
 
 S = "C[CH4+](OC(OCC)CC)CC"
@@ -233,17 +227,20 @@ lastlen = deepcopy(origlen)
 
 chainstack = Int16[]
 
-state = SKELETON
 nextedgestart = 0
+weight = 1
 symbol, isotope, aromatic, ringID, hydrogens, charge = nothing, nothing, false, nothing, 0, 0
 
 while curlen > 0
     moiety = nothing
-    unbrokenchain = true
     cursor = S[1]
 
     if isdigit( cursor )  #Handle rings
-
+        push!(MolecularData[end].ringID, cursor)
+        S = S[ 2 : end]
+    elseif cursor == '%'#2 decimal ring
+        push!(MolecularData[end].ringID, parse(Int16, S[ (BracketClose+1) : (BracketClose+2) ] ) )
+        S = S[ 4 : end]
     elseif isletter( cursor )
         symbollist = isuppercase( cursor ) ? aliphatics : aromatics
         aromatic = islowercase( cursor )
@@ -270,28 +267,24 @@ while curlen > 0
         if cursor == ')'
             S = S[ 2 : end ]
             nextedgestart = pop!( chainstack )
-            unbrokenchain = false #Lift pen
         end
     elseif isbondoperator(cursor) #Handle bonds
-
+        weight = bonds[ string(cursor) ]
     end
-
     #New atom/moiety was parsed
     if isa( moiety, Element )
         add_vertex!( MoleculeGraph )
         push!( MolecularData, moiety )
         len = length( MolecularData )
         if (len > 1)
-            if unbrokenchain
-                if nextedgestart == 0
-                    add_edge!(MoleculeGraph, len - 1, len )
-                else
-                    add_edge!(MoleculeGraph, nextedgestart, len )
-                    nextedgestart = 0
-                end
+            if nextedgestart == 0
+                add_edge!(MoleculeGraph, len - 1, len)#, weight )
             else
-                add_edge!(MoleculeGraph, len - 1, len )
-                unbrokenchain = true
+                add_edge!(MoleculeGraph, nextedgestart, len)#, weight )
+                nextedgestart = 0
+            end
+            if weight > 1
+                weight = 1
             end
         end
     end
@@ -304,8 +297,8 @@ while curlen > 0
     lastlen = curlen
 end
 
-ParseBracket("CH4")
-
 Sorig
-gplot(MoleculeGraph)
+
+
+gplot(convert(SimpleGraph, MoleculeGraph))
 println("Wuh")
