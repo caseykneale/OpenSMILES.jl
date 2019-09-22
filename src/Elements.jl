@@ -219,7 +219,8 @@ using Compose
 MoleculeGraph = SimpleGraph()#SimpleWeightedGraph();
 MolecularData = Element[]
 
-S = "C[CH4+](OC(OCC)CC)CC"
+S = "C1CCCCC1C1CCCCC1"
+#"C[CH4+](OC(OCC)CC)CC"#"C12(C(CCC)CCCC1)CCCCC2"#"C[CH4+](OC(OCC)CC)CC"
 Sorig = deepcopy(S)
 origlen = length(S)
 curlen = deepcopy(origlen)
@@ -236,7 +237,7 @@ while curlen > 0
     cursor = S[1]
 
     if isdigit( cursor )  #Handle rings
-        push!(MolecularData[end].ringID, cursor)
+        push!(MolecularData[end].ringID, parse(Int16, cursor))
         S = S[ 2 : end]
     elseif cursor == '%'#2 decimal ring
         push!(MolecularData[end].ringID, parse(Int16, S[ (BracketClose+1) : (BracketClose+2) ] ) )
@@ -270,6 +271,7 @@ while curlen > 0
         end
     elseif isbondoperator(cursor) #Handle bonds
         weight = bonds[ string(cursor) ]
+        S = S[ 2 : end ]
     end
     #New atom/moiety was parsed
     if isa( moiety, Element )
@@ -280,7 +282,7 @@ while curlen > 0
             if nextedgestart == 0
                 add_edge!(MoleculeGraph, len - 1, len)#, weight )
             else
-                add_edge!(MoleculeGraph, nextedgestart, len)#, weight )
+                add_edge!(MoleculeGraph, nextedgestart-1, len)#, weight )
                 nextedgestart = 0
             end
             if weight > 1
@@ -297,8 +299,34 @@ while curlen > 0
     lastlen = curlen
 end
 
+RingClosures = Dict()
+for ( i, molecule) in enumerate(MolecularData)
+    if length(molecule.ringID) > 0
+        for id in molecule.ringID
+            if id in keys( RingClosures )
+                push!( RingClosures[ id ], i)
+            else
+                RingClosures[ id ] = [i]
+            end
+        end
+    end
+end
+
+RingClosures
+for (k, v) in RingClosures
+    for id in 2:length(v)
+        add_edge!(MoleculeGraph, v[1], v[id])
+    end
+end
+
+length(MolecularData)
+
+#Close rings
+
+
+
 Sorig
 
 
-gplot(convert(SimpleGraph, MoleculeGraph))
+gplot( MoleculeGraph )
 println("Wuh")
