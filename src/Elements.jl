@@ -1,3 +1,5 @@
+using SimpleWeightedGraphs, LightGraphs, GraphPlot, Compose
+
 bondoperators = ["@", "-", "\\", "/", "=", "#", "\$"];
 specialoperators = [ ".", "]", "[", "(", ")"];
 operators = [ specialoperators;  bondoperators ];
@@ -211,118 +213,113 @@ struct SMILESParseException <: Exception
 end
 Base.showerror(io::IO, e::BracketParseException) = print(io, "Failed to parse bracket on character ", e.charloc, "!")
 
-using SimpleWeightedGraphs
-using LightGraphs
-using GraphPlot
-using Compose
-#Parse SMILES - whew here goes...
-MoleculeGraph = SimpleGraph()#SimpleWeightedGraph();
-MolecularData = Element[]
+function ParseSMILES( S::String )
+    MoleculeGraph = SimpleWeightedGraph();
+    MolecularData = Element[]
 
-#S = "C1CCCCC1C1CCCCC1" #2 cyclohexanes bridged
+    Sorig = deepcopy(S)
+    origlen = length(S)
+    curlen = deepcopy(origlen)
+    lastlen = deepcopy(origlen)
+
+    chainstack = Int16[]
+
+    nextedgestart = 0
+    weight = 1
+    # symbol, isotope, aromatic, ringID, hydrogens, charge = nothing, nothing, false, nothing, 0, 0
+    RingClosures = Dict()
+
+    while curlen > 0
+        moiety = nothing
+        cursor = S[1]
+
+        if isdigit( cursor )  #Handle rings
+            id = parse(Int16, cursor)
+            push!( MolecularData[end].ringID, id )
+            if id in keys( RingClosures )
+                push!( RingClosures[ id ], length(MolecularData) )
+            else
+                RingClosures[ id ] = [ length(MolecularData) ]
+            end
+            S = S[ 2 : end]
+        elseif cursor == '%'#2 decimal ring
+            push!(MolecularData[end].ringID, parse(Int16, S[ (BracketClose+1) : (BracketClose+2) ] ) )
+            S = S[ 4 : end]
+        elseif isletter( cursor )
+            symbollist = isuppercase( cursor ) ? aliphatics : aromatics
+            aromatic = islowercase( cursor )
+            symbol, S = ReadNextElement( S, symbollist )
+            if isa(symbol, Nothing)
+                @warn("Invalid SMILES. Unrecognized chemical symbol.")
+            else
+                moiety = Element(symbol)
+            end
+        elseif isspecialoperator(cursor)    #Handle operators
+            if cursor == '['
+                BracketClose = findfirst( [ s == ']' for s in S ] ) - 1
+                if (BracketClose > 0) && !isa(BracketClose, Nothing)
+                    moiety = ParseBracket( S[ 2 : BracketClose ] )
+                    S = S[ (BracketClose+2) : end]
+                else
+                    @warn("Invalid SMILES. Bracket is either empty, or does not end.")
+                end
+            end
+            if cursor == '('
+                push!( chainstack, length( MolecularData )  )
+                S = S[ 2 : end ]
+            end
+            if cursor == ')'
+                S = S[ 2 : end ]
+                nextedgestart = pop!( chainstack )
+            end
+        elseif isbondoperator(cursor) #Handle bonds
+            weight = bonds[ string(cursor) ]
+            S = S[ 2 : end ]
+        end
+        #New atom/moiety was parsed
+        if isa( moiety, Element )
+            add_vertex!( MoleculeGraph )
+            push!( MolecularData, moiety )
+            len = length( MolecularData )
+            if (len > 1)
+                if nextedgestart == 0
+                    add_edge!(MoleculeGraph, len - 1, len, weight )
+                else
+                    add_edge!(MoleculeGraph, nextedgestart, len, weight )
+                    nextedgestart = 0
+                end
+                if weight > 1
+                    weight = 1
+                end
+            end
+        end
+        #Ensure we don't get stuck in an infinite loop
+        curlen = length( S )
+        if lastlen == curlen
+            throw(SMILESParseException( (origlen - curlen + 1) ))
+        end
+        lastlen = curlen
+    end
+
+    for (k, v) in RingClosures
+        for id in 1 : ( length( v ) - 1 )
+            if ( v[id+1] - v[id] ) != -1
+                add_edge!(MoleculeGraph, v[id], v[id+1])
+            end
+        end
+    end
+
+    return MoleculeGraph, MolecularData
+end
+
+S = "C1CCCCC1C1CCCCC1" #2 cyclohexanes bridged
 #S = "C12(CCCCC1)CCCCC2" #Spiro
-S = "C1CC(C12)CCC2"
+#S = "C1CCC2(C1)CCCC2"
 #S = "C12(C(CCC)CCCC1)CCCCC2"
 #S = "C[CH4+](OC(OCC)CC)CC"
-Sorig = deepcopy(S)
-origlen = length(S)
-curlen = deepcopy(origlen)
-lastlen = deepcopy(origlen)
 
-chainstack = Int16[]
+MoleculeGraph, MolecularData = ParseSMILES( S )
 
-nextedgestart = 0
-weight = 1
-symbol, isotope, aromatic, ringID, hydrogens, charge = nothing, nothing, false, nothing, 0, 0
-
-RingClosures = Dict()
-
-while curlen > 0
-    moiety = nothing
-    cursor = S[1]
-
-    if isdigit( cursor )  #Handle rings
-        id = parse(Int16, cursor)
-        push!( MolecularData[end].ringID, id )
-        if id in keys( RingClosures )
-            push!( RingClosures[ id ], length(MolecularData) )
-        else
-            RingClosures[ id ] = [ length(MolecularData) ]
-        end
-        println(RingClosures)
-        S = S[ 2 : end]
-    elseif cursor == '%'#2 decimal ring
-        push!(MolecularData[end].ringID, parse(Int16, S[ (BracketClose+1) : (BracketClose+2) ] ) )
-        S = S[ 4 : end]
-    elseif isletter( cursor )
-        symbollist = isuppercase( cursor ) ? aliphatics : aromatics
-        aromatic = islowercase( cursor )
-        symbol, S = ReadNextElement( S, symbollist )
-        if isa(symbol, Nothing)
-            @warn("Invalid SMILES. Unrecognized chemical symbol.")
-        else
-            moiety = Element(symbol)
-        end
-    elseif isspecialoperator(cursor)    #Handle operators
-        if cursor == '['
-            BracketClose = findfirst( [ s == ']' for s in S ] ) - 1
-            if (BracketClose > 0) && !isa(BracketClose, Nothing)
-                moiety = ParseBracket( S[ 2 : BracketClose ] )
-                S = S[ (BracketClose+2) : end]
-            else
-                @warn("Invalid SMILES. Bracket is either empty, or does not end.")
-            end
-        end
-        if cursor == '('
-            push!( chainstack, length( MolecularData ) + 1 )
-            S = S[ 2 : end ]
-        end
-        if cursor == ')'
-            S = S[ 2 : end ]
-            nextedgestart = pop!( chainstack )
-        end
-    elseif isbondoperator(cursor) #Handle bonds
-        weight = bonds[ string(cursor) ]
-        S = S[ 2 : end ]
-    end
-    #New atom/moiety was parsed
-    if isa( moiety, Element )
-        add_vertex!( MoleculeGraph )
-        push!( MolecularData, moiety )
-        len = length( MolecularData )
-        if (len > 1)
-            if nextedgestart == 0
-                add_edge!(MoleculeGraph, len - 1, len)#, weight )
-            else
-                add_edge!(MoleculeGraph, nextedgestart, len)#, weight )
-                nextedgestart = 0
-            end
-            if weight > 1
-                weight = 1
-            end
-        end
-    end
-    #Ensure we don't get stuck in an infinite loop
-    curlen = length( S )
-    if lastlen == curlen
-        throw(SMILESParseException( (origlen - curlen + 1) ))
-    end
-    lastlen = curlen
-end
-
-for (k, v) in RingClosures
-    for id in 1 : ( length( v ) - 1 )
-        if ( v[id+1] - v[id] ) != -1
-            add_edge!(MoleculeGraph, v[id], v[id+1])
-        end
-    end
-end
-
-length(MolecularData)
-MoleculeGraph
-#add_edge!(MoleculeGraph, 2,11)
-#Close rings
-Sorig
-RingClosures
-gplot( MoleculeGraph )
+S
+gplot( Graph( adjacency_matrix( MoleculeGraph ) ) )
 println("Wuh")
