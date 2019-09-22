@@ -219,8 +219,11 @@ using Compose
 MoleculeGraph = SimpleGraph()#SimpleWeightedGraph();
 MolecularData = Element[]
 
-S = "C1CCCCC1C1CCCCC1"
-#"C[CH4+](OC(OCC)CC)CC"#"C12(C(CCC)CCCC1)CCCCC2"#"C[CH4+](OC(OCC)CC)CC"
+#S = "C1CCCCC1C1CCCCC1" #2 cyclohexanes bridged
+#S = "C12(CCCCC1)CCCCC2" #Spiro
+S = "C1CC(C12)CCC2"
+#S = "C12(C(CCC)CCCC1)CCCCC2"
+#S = "C[CH4+](OC(OCC)CC)CC"
 Sorig = deepcopy(S)
 origlen = length(S)
 curlen = deepcopy(origlen)
@@ -232,12 +235,21 @@ nextedgestart = 0
 weight = 1
 symbol, isotope, aromatic, ringID, hydrogens, charge = nothing, nothing, false, nothing, 0, 0
 
+RingClosures = Dict()
+
 while curlen > 0
     moiety = nothing
     cursor = S[1]
 
     if isdigit( cursor )  #Handle rings
-        push!(MolecularData[end].ringID, parse(Int16, cursor))
+        id = parse(Int16, cursor)
+        push!( MolecularData[end].ringID, id )
+        if id in keys( RingClosures )
+            push!( RingClosures[ id ], length(MolecularData) )
+        else
+            RingClosures[ id ] = [ length(MolecularData) ]
+        end
+        println(RingClosures)
         S = S[ 2 : end]
     elseif cursor == '%'#2 decimal ring
         push!(MolecularData[end].ringID, parse(Int16, S[ (BracketClose+1) : (BracketClose+2) ] ) )
@@ -282,7 +294,7 @@ while curlen > 0
             if nextedgestart == 0
                 add_edge!(MoleculeGraph, len - 1, len)#, weight )
             else
-                add_edge!(MoleculeGraph, nextedgestart-1, len)#, weight )
+                add_edge!(MoleculeGraph, nextedgestart, len)#, weight )
                 nextedgestart = 0
             end
             if weight > 1
@@ -290,7 +302,6 @@ while curlen > 0
             end
         end
     end
-
     #Ensure we don't get stuck in an infinite loop
     curlen = length( S )
     if lastlen == curlen
@@ -299,34 +310,19 @@ while curlen > 0
     lastlen = curlen
 end
 
-RingClosures = Dict()
-for ( i, molecule) in enumerate(MolecularData)
-    if length(molecule.ringID) > 0
-        for id in molecule.ringID
-            if id in keys( RingClosures )
-                push!( RingClosures[ id ], i)
-            else
-                RingClosures[ id ] = [i]
-            end
+for (k, v) in RingClosures
+    for id in 1 : ( length( v ) - 1 )
+        if ( v[id+1] - v[id] ) != -1
+            add_edge!(MoleculeGraph, v[id], v[id+1])
         end
     end
 end
 
-RingClosures
-for (k, v) in RingClosures
-    for id in 2:length(v)
-        add_edge!(MoleculeGraph, v[1], v[id])
-    end
-end
-
 length(MolecularData)
-
+MoleculeGraph
+#add_edge!(MoleculeGraph, 2,11)
 #Close rings
-
-
-
 Sorig
-
-
+RingClosures
 gplot( MoleculeGraph )
 println("Wuh")
