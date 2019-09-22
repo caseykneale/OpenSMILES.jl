@@ -167,7 +167,7 @@ function ParseBracket(S)
                     symbollist = isuppercase( cursor ) ? bracket : bracket_aromatic
                     aromatic = islowercase( cursor )
                     symbol, S = ReadNextElement( S, symbollist )
-                    if isa(symbol, nothing)
+                    if isa(symbol, Nothing)
                         @warn("Invalid SMILES. Unrecognized chemical symbol.")
                     end
                 elseif S[1] == 'H'
@@ -225,7 +225,7 @@ using Compose
 MoleculeGraph = SimpleGraph()
 MolecularData = Element[]
 
-S = "CC(OCC(OCC)CC)CC"
+S = "C[CH4+](OC(OCC)CC)CC"
 Sorig = deepcopy(S)
 origlen = length(S)
 curlen = deepcopy(origlen)
@@ -255,10 +255,10 @@ while curlen > 0
         end
     elseif isspecialoperator(cursor)    #Handle operators
         if cursor == '['
-            BracketClose = findfirst( S .== "]" ) - 1
-            if (BracketClose > 0) & !isa(BrackClose, Nothing)
-                moiety = ParseBracket( S[ 1 : BracketClose ] )
-                S = S[ (BracketClose+1) : end]
+            BracketClose = findfirst( [ s == ']' for s in S ] ) - 1
+            if (BracketClose > 0) && !isa(BracketClose, Nothing)
+                moiety = ParseBracket( S[ 2 : BracketClose ] )
+                S = S[ (BracketClose+2) : end]
             else
                 @warn("Invalid SMILES. Bracket is either empty, or does not end.")
             end
@@ -304,6 +304,7 @@ while curlen > 0
     lastlen = curlen
 end
 
+ParseBracket("CH4")
 
 Sorig
 gplot(MoleculeGraph)
