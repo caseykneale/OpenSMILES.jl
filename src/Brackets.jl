@@ -12,7 +12,6 @@ struct BracketParseException <: Exception
 end
 Base.showerror(io::IO, e::BracketParseException) = print(io, "Failed to parse bracket(\"[$(e.bracketcontents)]\") on character ", e.charloc, "!")
 
-
 function ParseBracket(S)
     Sorig = deepcopy(S)
     origlen = length(S)
@@ -78,6 +77,3 @@ function ParseBracket(S)
     end
     return Element( symbol, isotope, aromatic, ringID, hydrogens, charge )
 end
-
-ParseBracket("22NaH")
-ParseBracket("O-")

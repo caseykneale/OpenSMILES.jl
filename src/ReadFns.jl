@@ -27,12 +27,6 @@ function ReadNextElement( S::String , List::Array{ String, 1 } )
     return NextElement, S
 end
 
-ReadNextElement( "ScC", bracket )
-ReadNextElement( "ScAs", bracket )
-ReadNextElement( "Sc", bracket )
-ReadNextElement( "CO", bracket )
-ReadNextElement( "C", bracket )
-
 #Fn for parsing the inside of a bracket...
 function ReadNextNumeric(S::String)
     len = length(S)
@@ -50,11 +44,6 @@ function ReadNextNumeric(S::String)
     end
     return isotope, S
 end
-
-ReadNextNumeric("123UrC")
-ReadNextNumeric("UrC")
-ReadNextNumeric("12CH4")
-
 
 function ReadNextCharge(S::String)
     len = length(S)

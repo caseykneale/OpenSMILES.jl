@@ -11,7 +11,6 @@ valence = Dict( "B" => 3, "C" => 4, "N" => (3, 5), "O" => 2, "P" => (3, 5),
 aliphatics  = ["B", "C", "N", "O", "S", "P", "F", "Cl", "Br", "I"];
 aromatics   = ["b", "c", "n", "o", "s", "p"];
 
-#bracket_atom ::= "[" isotope? symbol chiral? hcount? charge? class? "]"
 bracket = [ "H", "He" ,"Li", "Be", "B", "C", "N", "O", "F", "Ne", "Na",
             "Al", "Si", "P", "S", "Cl", "Ar", "K", "Ca", "Sc", "Ti", "V", "Cr",
             "Mn", "Fe", "Co", "Ni", "Cu", "Zn", "Ga", "Ge", "As", "Se", "Br",

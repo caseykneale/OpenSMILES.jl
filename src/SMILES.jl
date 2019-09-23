@@ -1,5 +1,5 @@
 module SMILES
-    using SimpleWeightedGraphs, LightGraphs, GraphPlot, Compose
+    using SimpleWeightedGraphs, LightGraphs#, GraphPlot, Compose
 
     include("Elements.jl")
     export bondoperators, specialoperators, operators, bonds, valence,
