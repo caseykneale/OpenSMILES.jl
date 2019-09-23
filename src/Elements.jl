@@ -36,14 +36,15 @@ mutable struct Element
     aromatic::Bool
     ringID::Array{Int16,1}
     explicithydrogens::Int8
+    implicithydrogens::Int8
     charge::Int8
 end
 
 function Element(symbol::String)
     if islowercase(symbol[1])
-        return Element(uppercasefirst(symbol), nothing, true, [], 0, 0 )
+        return Element(uppercasefirst(symbol), nothing, true, [], 0, 0, 0 )
     else
-        return Element(symbol, nothing, false, [], 0, 0 )
+        return Element(symbol, nothing, false, [], 0, 0, 0 )
     end
 end
 

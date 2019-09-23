@@ -75,5 +75,5 @@ function ParseBracket(S)
         end
         lastlen = curlen
     end
-    return Element( symbol, isotope, aromatic, ringID, hydrogens, charge )
+    return Element( symbol, isotope, aromatic, ringID, hydrogens, 0, charge )
 end
