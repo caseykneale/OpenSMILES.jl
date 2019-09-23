@@ -1,11 +1,11 @@
 module SMILES
     using SimpleWeightedGraphs, LightGraphs
-
+    import Base: ==
     include("Elements.jl")
     export bondoperators, specialoperators, operators, bonds, valence,
             aliphatics, aromatics, bracket, bracket_aromatic, isoperator,
             isbondoperator, isspecialoperator, ispm, FindNumerics, FindPMs,
-            Element
+            Element, ==
 
     include("ReadFns.jl")
     export ReadNextElement, ReadNextNumeric, ReadNextCharge

@@ -46,3 +46,11 @@ function Element(symbol::String)
         return Element(symbol, nothing, false, [], 0, 0 )
     end
 end
+
+
+function Base.:(==)(a::Element, b::Element)
+    return all( [ a.symbol == b.symbol, a.isotope == b.isotope,
+                a.aromatic == b.aromatic, a.ringID == b.ringID,
+                a.explicithydrogens == b.explicithydrogens,
+                a.charge == b.charge])
+end

@@ -1,25 +1,25 @@
 using SMILES
 using Test
 
-# @testset "ReadNextElement" begin
-#     ReadNextElement( "ScC", bracket )
-#     ReadNextElement( "ScAs", bracket )
-#     ReadNextElement( "Sc", bracket )
-#     ReadNextElement( "CO", bracket )
-#     ReadNextElement( "C", bracket )
-#     @test
-# end
+@testset "ReadNextElement" begin
+    @test SMILES.ReadNextElement( "ScC", SMILES.bracket ) == ("Sc", "C")
+    @test SMILES.ReadNextElement( "ScAs", SMILES.bracket ) == ("Sc", "As")
+    @test SMILES.ReadNextElement( "Sc", bracket ) == ("Sc", "")
+    @test SMILES.ReadNextElement( "CO", bracket ) == ("C", "O")
+    @test SMILES.ReadNextElement( "C", bracket ) == ("C", "")
+end
 
-# @testset "ReadNextElement" begin
-#     ReadNextNumeric("123UrC")
-#     ReadNextNumeric("UrC")
-#     ReadNextNumeric("12CH4")
-#     @test
-# end
+@testset "ReadNextElement" begin
+    @test SMILES.ReadNextNumeric("123UrC") == (123, "UrC")
+    @test SMILES.ReadNextNumeric("UrC") == (nothing, "UrC")
+    @test SMILES.ReadNextNumeric("12CH4") == (12, "CH4")
+end
 
-# @testset "Brackets" begin
-#     ParseBracket("22NaH")
-#     ParseBracket("O-")
-#
-#     @test 
-# end
+@testset "Brackets" begin
+    @test SMILES.ParseBracket("22NaH") == SMILES.Element("Na", 22, false, Int16[], 1, 0)
+    @test SMILES.ParseBracket("O-") == SMILES.Element("O", nothing, false, Int16[], 0, -1)
+    @test SMILES.ParseBracket("CH4") == SMILES.Element("C", nothing, false, Int16[], 4, 0)
+    @test SMILES.ParseBracket("CH3-") == SMILES.Element("C", nothing, false, Int16[], 3, -1)
+    @test SMILES.ParseBracket("CH2--") == SMILES.ParseBracket("CH2-2")
+    @test SMILES.ParseBracket("CH1---") == SMILES.ParseBracket("CH1-3")
+end
