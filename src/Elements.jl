@@ -3,8 +3,8 @@ specialoperators = [ ".", "]", "[", "(", ")"];
 operators = [ specialoperators;  bondoperators ];
 
 bonds = Dict( "-" => 1, "\\" => 1, "/" => 1, "=" => 2, "#" => 3, "\$" => 4 );
-valence = Dict( "B" => 3, "C" => 4, "N" => (3, 5), "O" => 2, "P" => (3, 5),
-                "S" => (2, 4, 6), "F" => 1, "Cl" => 1, "Br" => 1, "I" => 1 );
+valence = Dict( "B" => 3, "C" => 4, "N" => [3, 5], "O" => 2, "P" => [3, 5],
+                "S" => [2, 4, 6], "F" => 1, "Cl" => 1, "Br" => 1, "I" => 1 );
 
 aliphatics  = ["B", "C", "N", "O", "S", "P", "F", "Cl", "Br", "I"];
 aromatics   = ["b", "c", "n", "o", "s", "p"];

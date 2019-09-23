@@ -3,7 +3,7 @@ struct SMILESParseException <: Exception
 end
 Base.showerror(io::IO, e::SMILESParseException) = print(io, "Failed to parse SMILES on character ", e.charloc, "!")
 
-function ParseSMILES( S::String )
+function ParseSMILES( S::String, calculate_implicit_hydrogens = true )
     MoleculeGraph = SimpleWeightedGraph();
     MolecularData = Element[]
 
@@ -100,12 +100,42 @@ function ParseSMILES( S::String )
         end
         lastlen = curlen
     end
-
+    #Close rings!
     for (k, v) in RingClosures
         for id in 1 : ( length( v ) - 1 )
             if ( v[id+1] - v[id] ) != -1
                 add_edge!(MoleculeGraph, v[id], v[id+1])
             end
+        end
+    end
+    #
+    if calculate_implicit_hydrogens
+        for ( i, atom ) in enumerate( MolecularData )
+            #Find all edges with this atom.
+            implicitH = 0
+            if atom.explicithydrogens == 0
+                #Lookup valence
+                if atom.symbol in keys( valence )
+                    Valence = valence[ atom.symbol ]
+                    BondedElectrons = sum( MoleculeGraph.weights[:,i].nzval )
+                    Aromaticity = (isa(atom.aromatic, Nothing) ? 0 : atom.aromatic)
+                    implicitH = Valence .- BondedElectrons .- Aromaticity
+                    #Look I'm not keeping track of non-bonding e- pairs
+                    #All I'm doing here is seeing if this is likely invalid structure...
+                    if all( implicitH .< 0 )
+                        #Wiggle to find proper valence
+                        @warn("Illegal number of implicit hydrogens in $(atom.symbol) (Atom #$i). Defaulting to 0 hydrogens.")
+                        implicitH = 0
+                    end
+                else
+                    #Valence not known to package :/
+                    @warn("The valence for $(atom.symbol) isn't known, implicit hydrogens not determined.")
+                end
+            else #User specified hydrogens explicitly - use them.
+                implicitH = atom.explicithydrogens
+            end
+
+            MolecularData[i].implicithydrogens = implicitH
         end
     end
 

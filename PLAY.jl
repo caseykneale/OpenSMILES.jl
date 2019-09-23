@@ -23,8 +23,10 @@ for ( i, atom ) in enumerate( Data )
             Valence = SMILES.valence[ atom.symbol ]
             BondedElectrons = sum(Graph.weights[:,i].nzval)
             Aromaticity = (isa(atom.aromatic, Nothing) ? 0 : atom.aromatic)
-            implicitH = Valence - BondedElectrons - Aromaticity
-            if implicitH < 0
+            implicitH = Valence .- BondedElectrons .- Aromaticity
+            #Look I'm not keeping track of non-bonding e- pairs
+            #All I'm doing here is seeing if this is likely invalid structure...
+            if all( implicitH .< 0 )
                 #Wiggle to find proper valence
                 @warn("Illegal number of implicit hydrogens in $(atom.symbol) (Atom #$i). Defaulting to 0 hydrogens.")
                 implicitH = 0
