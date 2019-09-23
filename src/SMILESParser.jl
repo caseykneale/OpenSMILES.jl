@@ -1,7 +1,7 @@
 struct SMILESParseException <: Exception
     charloc::Int64
 end
-Base.showerror(io::IO, e::BracketParseException) = print(io, "Failed to parse bracket on character ", e.charloc, "!")
+Base.showerror(io::IO, e::SMILESParseException) = print(io, "Failed to parse SMILES on character ", e.charloc, "!")
 
 function ParseSMILES( S::String )
     MoleculeGraph = SimpleWeightedGraph();

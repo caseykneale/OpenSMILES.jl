@@ -1,7 +1,6 @@
 using SMILES
 using Test
 
-
 # @testset "ReadNextElement" begin
 #     ReadNextElement( "ScC", bracket )
 #     ReadNextElement( "ScAs", bracket )
@@ -22,5 +21,5 @@ using Test
 #     ParseBracket("22NaH")
 #     ParseBracket("O-")
 #
-#     @test all( Xform( simplearray ) .== [ [-1,0,1] [-1,0,1] ] )
+#     @test 
 # end

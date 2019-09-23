@@ -1,5 +1,3 @@
-using SimpleWeightedGraphs, LightGraphs, GraphPlot, Compose
-
 bondoperators = ["@", "-", "\\", "/", "=", "#", "\$"];
 specialoperators = [ ".", "]", "[", "(", ")"];
 operators = [ specialoperators;  bondoperators ];
