@@ -8,7 +8,11 @@ import Compose, GraphPlot, LightGraphs
 #Graph, Data = SMILES.ParseSMILES("C1CC12CC2")
 
 #Anthracene
-Graph, Data = SMILES.ParseSMILES("C1=CC=C2C=C3C=CC=CC3=CC2=C1")
-GraphPlot.gplot( LightGraphs.Graph( LightGraphs.adjacency_matrix( Graph ) ) )
+#Graph, Data = SMILES.ParseSMILES("C1=CC=C2C=C3C=CC=CC3=CC2=C1")
+
+#Lysergic Acid Diethylamide
+Graph, Data = SMILES.ParseSMILES("CCN(CC)C(=O)C1CN(C2CC3=CNC4=CC=CC(=C34)C2=C1)C")
+
+GraphPlot.gplot( SMILES.WeightedToSimple( Graph ) )
 
 Data

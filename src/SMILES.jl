@@ -16,6 +16,9 @@ module SMILES
     include("SMILESParser.jl")
     export SMILESParseException, ParseSMILES
 
+    include("Utils.jl")
+    export WeightedToSimple
+
 end
 
 #S = "C1CCCCC1C1CCCCC1" #2 cyclohexanes bridged

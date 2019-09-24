@@ -128,7 +128,8 @@ function ParseSMILES( S::String, calculate_implicit_hydrogens = true )
                             @warn("Illegal number of implicit hydrogens in $(atom.symbol) (Atom #$i). Defaulting to 0 hydrogens.")
                             implicitH = 0
                         else
-                            implicitH = implicitH[ findfirst(implicitH .> 0)]
+                            implicitH = implicitH[ implicitH .> 0 ] 
+                            implicitH = reduce(min, implicitH .> 0)
                         end
                     end
                 else
