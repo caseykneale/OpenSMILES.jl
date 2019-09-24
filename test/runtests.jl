@@ -4,9 +4,10 @@ using Test
 @testset "ReadNextElement" begin
     @test SMILES.ReadNextElement( "ScC", SMILES.bracket ) == ("Sc", "C")
     @test SMILES.ReadNextElement( "ScAs", SMILES.bracket ) == ("Sc", "As")
-    @test SMILES.ReadNextElement( "Sc", bracket ) == ("Sc", "")
-    @test SMILES.ReadNextElement( "CO", bracket ) == ("C", "O")
-    @test SMILES.ReadNextElement( "C", bracket ) == ("C", "")
+    @test SMILES.ReadNextElement( "Sc", SMILES.bracket ) == ("Sc", "")
+    @test SMILES.ReadNextElement( "CO", SMILES.bracket ) == ("C", "O")
+    @test SMILES.ReadNextElement( "C", SMILES.bracket ) == ("C", "")
+    @test SMILES.ReadNextElement( "s", SMILES.aromatics ) == ("s", "")
 end
 
 @testset "ReadNextNumeric" begin
@@ -24,11 +25,14 @@ end
     @test SMILES.ReadNextCharge("-2") == (-2, "")
 end
 
-@testset "Brackets" begin
-    @test SMILES.ParseBracket("22NaH") == SMILES.Element("Na", 22, false, Int16[], 1, 0)
-    @test SMILES.ParseBracket("O-") == SMILES.Element("O", nothing, false, Int16[], 0, -1)
-    @test SMILES.ParseBracket("CH4") == SMILES.Element("C", nothing, false, Int16[], 4, 0)
-    @test SMILES.ParseBracket("CH3-") == SMILES.Element("C", nothing, false, Int16[], 3, -1)
+@testset "BracketsKnown" begin
+    @test SMILES.ParseBracket("22NaH") == SMILES.Element("Na", 22, false, Int16[], 1, 0, 0)
+    @test SMILES.ParseBracket("O-") == SMILES.Element("O", nothing, false, Int16[], 0, 0, -1)
+    @test SMILES.ParseBracket("CH4") == SMILES.Element("C", nothing, false, Int16[], 4, 0, 0)
+    @test SMILES.ParseBracket("CH3-") == SMILES.Element("C", nothing, false, Int16[], 3, 0, -1)
+end
+
+@testset "BracketsEquivalences" begin
     @test SMILES.ParseBracket("CH2--") == SMILES.ParseBracket("CH2-2")
     @test SMILES.ParseBracket("CH1---") == SMILES.ParseBracket("CH1-3")
     @test SMILES.ParseBracket("Fe++") == SMILES.ParseBracket("Fe+2")

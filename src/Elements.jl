@@ -48,6 +48,7 @@ function Element(symbol::String)
     end
 end
 
+abbreviation(E::Element) = E.symbol
 
 function Base.:(==)(a::Element, b::Element)
     return all( [ a.symbol == b.symbol, a.isotope == b.isotope,

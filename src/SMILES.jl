@@ -5,7 +5,7 @@ module SMILES
     export bondoperators, specialoperators, operators, bonds, valence,
             aliphatics, aromatics, bracket, bracket_aromatic, isoperator,
             isbondoperator, isspecialoperator, ispm, FindNumerics, FindPMs,
-            Element, ==
+            Element, abbreviation, ==
 
     include("ReadFns.jl")
     export ReadNextElement, ReadNextNumeric, ReadNextCharge

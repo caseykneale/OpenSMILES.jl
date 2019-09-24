@@ -3,7 +3,7 @@ function ReadNextElement( S::String , List::Array{ String, 1 } )
     NextElement = nothing
     if length( S ) > 1
         #See if the second char is lowercase
-        if islowercase( S[ 2 ] )
+        if islowercase( S[ 2 ] ) && isuppercase( S[ 1 ] )
             if S[ 1:2 ] in List
                 NextElement = S[1:2]
                 S = (length(S) > 2) ? S[3:end] : ""
