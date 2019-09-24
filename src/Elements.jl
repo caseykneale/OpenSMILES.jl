@@ -48,11 +48,28 @@ function Element(symbol::String)
     end
 end
 
-abbreviation(E::Element) = E.symbol
-
 function Base.:(==)(a::Element, b::Element)
     return all( [ a.symbol == b.symbol, a.isotope == b.isotope,
                 a.aromatic == b.aromatic, a.ringID == b.ringID,
                 a.explicithydrogens == b.explicithydrogens,
                 a.charge == b.charge])
 end
+
+#immutable struct to hold elemental information - less memory then "Element"
+struct GraphElement
+    symbol::String
+    isotope::Union{Int16, Nothing}
+    aromatic::Bool
+    hydrogens::Int8
+    charge::Int8
+end
+
+GraphElement(E::Element) = GraphElement(E.symbol, E.isotope, E.aromatic,
+                                        E.hydrogens, E.charge)
+
+abbreviation(E::Union{GraphElement,Element}) = E.symbol
+implicitH(E::Element) = E.implicithydrogens
+explicitH(E::Element) = E.explicithydrogens
+H(E::Element) = E.implicithydrogens + E.explicithydrogens
+charge(E::Union{GraphElement,Element}) = E.charge
+isotope(E::Union{GraphElement,Element}) = E.isotope

@@ -38,3 +38,12 @@ end
     @test SMILES.ParseBracket("Fe++") == SMILES.ParseBracket("Fe+2")
     @test SMILES.ParseBracket("Fe+++") == SMILES.ParseBracket("Fe+3")
 end
+
+
+@testset "ParseSMILESDataTests" begin
+    _, Data = SMILES.ParseSMILES("CCCC(C)C")
+    checkhydrogens = Dict( SMILES.countitems( SMILES.H.( Data ) ) )
+    @test checkhydrogens[1] == 1
+    @test checkhydrogens[2] == 2
+    @test checkhydrogens[3] == 3
+end
