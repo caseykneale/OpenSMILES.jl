@@ -13,7 +13,9 @@ import Compose, GraphPlot, LightGraphs, PeriodicTable
 #Firefly Luciferin
 #Graph, Data = SMILES.ParseSMILES("O=C(O)[CH]1N=C(SC1)c2sc3cc(O)ccc3n2")
 
-Graph, Data = SMILES.ParseSMILES("C1=CC=C2C(=C1)C(=CN2)CC(C(=O)O)N");
+Graph, Data = SMILES.ParseSMILES("O=C(O)[CH]1N=C(SC1)c2sc3cc(O)ccc3n2");
 GraphPlot.gplot( SMILES.WeightedToSimple( Graph ), nodelabel = SMILES.abbreviation.( Data ) )
-Data
-EmpiricalFormula( Data )
+
+SMILES.EmpiricalFormula( Data )
+
+#Data

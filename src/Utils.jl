@@ -15,5 +15,5 @@ function EmpiricalFormula(data::Array{Element, 1} )
         countem["H"] = Hydrogens
     end
     sortem = sort( collect( keys( countem ) ) )
-    return join([ ele * string( countem[ele] ) for ele in sortem])
+    return join([ (countem[ele] == 1) ? ele : ele * string( countem[ele] ) for ele in sortem])
 end

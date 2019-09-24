@@ -39,7 +39,7 @@ end
     @test SMILES.ParseBracket("Fe+++") == SMILES.ParseBracket("Fe+3")
 end
 
-@testset "Parse SMILES Implicit Hydrogens" begin
+@testset "ParseSMILES Checking Implicit Hydrogens on Simple Molecules" begin
     _, Data = SMILES.ParseSMILES("CCCC(C)C")
     checkhydrogens = Dict( SMILES.countitems( SMILES.H.( Data ) ) )
     @test checkhydrogens[1] == 1
@@ -54,9 +54,17 @@ end
     @test checkhydrogens[3] == 1
 end
 
-@testset "Parse SMILES EmpiricalFormula" begin
+@testset "ParseSMILES Empirical Formulas of Complicated Molecules" begin
+    #Anthracene
     _, Data = SMILES.ParseSMILES("C1=CC=C2C=C3C=CC=CC3=CC2=C1")
     @test SMILES.EmpiricalFormula( Data ) == "C14H10"
+    #Tryptophan
     _, Data = SMILES.ParseSMILES("C1=CC=C2C(=C1)C(=CN2)CC(C(=O)O)N")
     @test SMILES.EmpiricalFormula( Data ) == "C11H12N2O2"
+    #Lysergic Acid Diethylamide
+    _, Data = SMILES.ParseSMILES("CCN(CC)C(=O)C1CN(C2CC3=CNC4=CC=CC(=C34)C2=C1)C")
+    @test SMILES.EmpiricalFormula( Data ) == "C20H25N3O"
+    #Firefly Luciferin
+    _, Data = SMILES.ParseSMILES("O=C(O)[CH]1N=C(SC1)c2sc3cc(O)ccc3n2")
+    @test SMILES.EmpiricalFormula( Data ) == "C11H8N2O3S2"
 end
