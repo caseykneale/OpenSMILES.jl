@@ -21,12 +21,3 @@ module SMILES
     export WeightedToSimple, countitems
 
 end
-
-#S = "C1CCCCC1C1CCCCC1" #2 cyclohexanes bridged
-#S = "C12(CCCCC1)CCCCC2" #Spiro
-#S = "C1CCC2(C1)CCCC2"
-#S = "C12(C(CCC)CCCC1)CCCCC2"
-#S = "C[CH4+](OC(OCC)CC)CC"
-# MoleculeGraph, MolecularData = ParseSMILES( "C12(CCCCC1)CCCCC2" )
-# gplot( Graph( adjacency_matrix( MoleculeGraph ) ) )
-# println("Wuh")

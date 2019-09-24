@@ -53,3 +53,10 @@ end
     @test checkhydrogens[2] == 4
     @test checkhydrogens[3] == 1
 end
+
+@testset "Parse SMILES EmpiricalFormula" begin
+    _, Data = SMILES.ParseSMILES("C1=CC=C2C=C3C=CC=CC3=CC2=C1")
+    @test SMILES.EmpiricalFormula( Data ) == "C14H10"
+    _, Data = SMILES.ParseSMILES("C1=CC=C2C(=C1)C(=CN2)CC(C(=O)O)N")
+    @test SMILES.EmpiricalFormula( Data ) == "C11H12N2O2"
+end
