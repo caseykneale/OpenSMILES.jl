@@ -17,7 +17,7 @@ module SMILES
     export SMILESParseException, ParseSMILES
 
     include("Utils.jl")
-    export WeightedToSimple
+    export WeightedToSimple, GraphElement
 
 end
 
