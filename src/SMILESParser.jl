@@ -122,10 +122,14 @@ function ParseSMILES( S::String, calculate_implicit_hydrogens = true )
                     implicitH = Valence .- BondedElectrons .- Aromaticity
                     #Look I'm not keeping track of non-bonding e- pairs
                     #All I'm doing here is seeing if this is likely invalid structure...
-                    if all( implicitH .< 0 )
-                        #Wiggle to find proper valence
-                        @warn("Illegal number of implicit hydrogens in $(atom.symbol) (Atom #$i). Defaulting to 0 hydrogens.")
-                        implicitH = 0
+                    if length(implicitH) > 1
+                        if all( implicitH .< 0 )
+                            #Wiggle to find proper valence
+                            @warn("Illegal number of implicit hydrogens in $(atom.symbol) (Atom #$i). Defaulting to 0 hydrogens.")
+                            implicitH = 0
+                        else
+                            implicitH = implicitH[ findfirst(implicitH .> 0)]
+                        end
                     end
                 else
                     #Valence not known to package :/

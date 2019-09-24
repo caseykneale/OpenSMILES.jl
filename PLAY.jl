@@ -1,45 +1,14 @@
-push!(LOAD_PATH, "/home/caseykneale/Desktop/SMILES.jl/")
+push!(LOAD_PATH, "/home/caseykneale/Desktop/SMILES.jl/");
 import SMILES
-#using Pkg
-#Pkg.add("Compose");
-#Pkg.add("GraphPlot");
 import Compose, GraphPlot, LightGraphs
+#Tryptophan
+#Graph, Data = SMILES.ParseSMILES("C1=CC=C2C(=C1)C(=CN2)CC(C(=O)O)N")
 
+#Bowtie
+#Graph, Data = SMILES.ParseSMILES("C1CC12CC2")
 
-Graph, Data = SMILES.ParseSMILES("C1CC12CC2")
+#Anthracene
+Graph, Data = SMILES.ParseSMILES("C1=CC=C2C=C3C=CC=CC3=CC2=C1")
 GraphPlot.gplot( LightGraphs.Graph( LightGraphs.adjacency_matrix( Graph ) ) )
-
-sum( Graph.weights[2,:].nzval )
-
-Graph.weights[2,:]
-sum(Graph.weights[1,:].value)
-#Now we need to flesh out the number of hydrogens in each bond
-for ( i, atom ) in enumerate( Data )
-    #Find all edges with this atom.
-    implicitH = 0
-    if atom.explicithydrogens == 0
-        #Lookup valence
-        if atom.symbol in keys( SMILES.valence )
-            Valence = SMILES.valence[ atom.symbol ]
-            BondedElectrons = sum(Graph.weights[:,i].nzval)
-            Aromaticity = (isa(atom.aromatic, Nothing) ? 0 : atom.aromatic)
-            implicitH = Valence .- BondedElectrons .- Aromaticity
-            #Look I'm not keeping track of non-bonding e- pairs
-            #All I'm doing here is seeing if this is likely invalid structure...
-            if all( implicitH .< 0 )
-                #Wiggle to find proper valence
-                @warn("Illegal number of implicit hydrogens in $(atom.symbol) (Atom #$i). Defaulting to 0 hydrogens.")
-                implicitH = 0
-            end
-        else
-            #Valence not known to package :/
-            @warn("The valence for $(atom.symbol) isn't known, implicit hydrogens not determined.")
-        end
-    else #User specified hydrogens explicitly - use them.
-        implicitH = atom.explicithydrogens
-    end
-
-    Data[i].implicithydrogens = implicitH
-end
 
 Data
