@@ -13,9 +13,14 @@ import Compose, GraphPlot, LightGraphs, PeriodicTable
 #Firefly Luciferin
 #Graph, Data = SMILES.ParseSMILES("O=C(O)[CH]1N=C(SC1)c2sc3cc(O)ccc3n2")
 
-Graph, Data = SMILES.ParseSMILES("C1CCC(C)C1")
+Graph, Data = SMILES.ParseSMILES("C1CCCC(C)C1")
 GraphPlot.gplot( SMILES.WeightedToSimple( Graph ), nodelabel = SMILES.abbreviation.( Data ) )
 
 Data
 
-Dict( countitems(SMILES.H.(Data)) )[1]
+
+EmpiricalFormula( Data )
+
+a = Dict( SMILES.countitems(SMILES.H.(Data)) )
+
+collect( keys( a ) )

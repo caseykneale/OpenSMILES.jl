@@ -71,5 +71,6 @@ abbreviation(E::Union{GraphElement,Element}) = E.symbol
 implicitH(E::Element) = E.implicithydrogens
 explicitH(E::Element) = E.explicithydrogens
 H(E::Element) = E.implicithydrogens + E.explicithydrogens
+Hydrogens(E::Element) = E.implicithydrogens + E.explicithydrogens
 charge(E::Union{GraphElement,Element}) = E.charge
 isotope(E::Union{GraphElement,Element}) = E.isotope

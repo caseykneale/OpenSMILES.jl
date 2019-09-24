@@ -18,7 +18,7 @@ module SMILES
     export SMILESParseException, ParseSMILES
 
     include("Utils.jl")
-    export WeightedToSimple,  countitems
+    export WeightedToSimple, countitems
 
 end
 
