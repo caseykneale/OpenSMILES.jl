@@ -10,13 +10,13 @@
 
 This is a SMILES parser in Julia following the OpenSMILES format (to the best of my ability). Theres probably bugs, this isn't inventive its just a parser that turns SMILES into a weighted LightGraphs graph. Contributions welcome!
 
-#Examples
+# Examples
 
-#Tryptophan
+## Tryptophan
 ```Julia
 Graph, Data = SMILES.ParseSMILES("C1=CC=C2C(=C1)C(=CN2)CC(C(=O)O)N")
-#Bowtie
-#Graph, Data = SMILES.ParseSMILES("C1CC12CC2")
+# Bowtie
+# Graph, Data = SMILES.ParseSMILES("C1CC12CC2")
 
 GraphPlot.gplot( SMILES.WeightedToSimple( Graph ), nodelabel = SMILES.abbreviation.( Data ) )
 
