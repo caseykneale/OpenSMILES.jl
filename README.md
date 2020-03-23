@@ -6,3 +6,6 @@
 [![Codecov](https://codecov.io/gh/caseykneale/SMILES.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/caseykneale/SMILES.jl)
 [![Coveralls](https://coveralls.io/repos/github/caseykneale/SMILES.jl/badge.svg?branch=master)](https://coveralls.io/github/caseykneale/SMILES.jl?branch=master)
 [![Build Status](https://api.cirrus-ci.com/github/caseykneale/SMILES.jl.svg)](https://cirrus-ci.com/github/caseykneale/SMILES.jl)
+
+
+SMILES parser in Julia
