@@ -14,13 +14,21 @@ This is a SMILES parser in Julia following the OpenSMILES format (to the best of
 
 ## Tryptophan
 ```Julia
+using SMILES, GraphPlot
+
+# Tryptophan
 Graph, Data = SMILES.ParseSMILES("C1=CC=C2C(=C1)C(=CN2)CC(C(=O)O)N")
-# Bowtie
-# Graph, Data = SMILES.ParseSMILES("C1CC12CC2")
-
 GraphPlot.gplot( SMILES.WeightedToSimple( Graph ), nodelabel = SMILES.abbreviation.( Data ) )
-
-SMILES.EmpiricalFormula( Data )
+SMILES.EmpiricalFormula( Data ) # C11H12N2O2
 ```
+![Tryptophan](https://github.com/caseykneale/SMILES.jl/tree/master/output/Tryptophan.png)
 
-Enjoy
+```Julia
+# Bowtie ( not a real molecule :P )
+Graph, Data = SMILES.ParseSMILES("C1CC12CC2")
+GraphPlot.gplot( SMILES.WeightedToSimple( Graph ), nodelabel = SMILES.abbreviation.( Data ) )
+SMILES.EmpiricalFormula( Data ) #C5H8
+```
+![Bowtie](https://github.com/caseykneale/SMILES.jl/tree/master/output/Bowtie.png)
+
+Enjoy!
