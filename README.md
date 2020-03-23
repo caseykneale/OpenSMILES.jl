@@ -21,7 +21,7 @@ Graph, Data = SMILES.ParseSMILES("C1=CC=C2C(=C1)C(=CN2)CC(C(=O)O)N")
 GraphPlot.gplot( SMILES.WeightedToSimple( Graph ), nodelabel = SMILES.abbreviation.( Data ) )
 SMILES.EmpiricalFormula( Data ) # C11H12N2O2
 ```
-![Tryptophan](https://github.com/caseykneale/SMILES.jl/tree/master/output/Tryptophan.png)
+![Tryptophan](https://raw.githubusercontent.com/caseykneale/SMILES.jl/master/output/Tryptophan.png)
 
 ```Julia
 # Bowtie ( not a real molecule :P )
@@ -29,6 +29,6 @@ Graph, Data = SMILES.ParseSMILES("C1CC12CC2")
 GraphPlot.gplot( SMILES.WeightedToSimple( Graph ), nodelabel = SMILES.abbreviation.( Data ) )
 SMILES.EmpiricalFormula( Data ) #C5H8
 ```
-![Bowtie](https://github.com/caseykneale/SMILES.jl/tree/master/output/Bowtie.png)
+![Bowtie](https://raw.githubusercontent.com/caseykneale/SMILES.jl/master/output/Bowtie.png)
 
 Enjoy!
