@@ -1,4 +1,4 @@
-push!(LOAD_PATH, "/home/caseykneale/Desktop/SMILES.jl/");
+push!(LOAD_PATH, "/home/caseykneale/Desktop/OpenSMILES.jl/");
 import SMILES
 using Pkg
 import Compose, GraphPlot, LightGraphs, PeriodicTable

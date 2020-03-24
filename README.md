@@ -1,4 +1,4 @@
-# SMILES.jl
+# OpenSMILES.jl
 
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://caseykneale.github.io/SMILES.jl/stable)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://caseykneale.github.io/SMILES.jl/dev)
@@ -14,20 +14,20 @@ This is a SMILES parser in Julia following the OpenSMILES format (to the best of
 
 ## Tryptophan
 ```Julia
-using SMILES, GraphPlot
+using OpenSMILES, GraphPlot
 
 # Tryptophan
-Graph, Data = SMILES.ParseSMILES("C1=CC=C2C(=C1)C(=CN2)CC(C(=O)O)N")
-GraphPlot.gplot( SMILES.WeightedToSimple( Graph ), nodelabel = SMILES.abbreviation.( Data ) )
-SMILES.EmpiricalFormula( Data ) # C11H12N2O2
+Graph, Data = OpenSMILES.ParseSMILES("C1=CC=C2C(=C1)C(=CN2)CC(C(=O)O)N")
+GraphPlot.gplot( OpenSMILES.WeightedToSimple( Graph ), nodelabel = OpenSMILES.abbreviation.( Data ) )
+OpenSMILES.EmpiricalFormula( Data ) # C11H12N2O2
 ```
 ![Tryptophan](https://raw.githubusercontent.com/caseykneale/SMILES.jl/master/output/Tryptophan.png)
 
 ```Julia
 # Bowtie ( not a real molecule :P )
-Graph, Data = SMILES.ParseSMILES("C1CC12CC2")
-GraphPlot.gplot( SMILES.WeightedToSimple( Graph ), nodelabel = SMILES.abbreviation.( Data ) )
-SMILES.EmpiricalFormula( Data ) #C5H8
+Graph, Data = OpenSMILES.ParseSMILES("C1CC12CC2")
+GraphPlot.gplot( OpenSMILES.WeightedToSimple( Graph ), nodelabel = OpenSMILES.abbreviation.( Data ) )
+OpenSMILES.EmpiricalFormula( Data ) #C5H8
 ```
 ![Bowtie](https://raw.githubusercontent.com/caseykneale/SMILES.jl/master/output/Bowtie.png)
 
