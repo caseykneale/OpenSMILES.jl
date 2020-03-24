@@ -1,7 +1,7 @@
 using Documenter, OpenSMILES
 
 makedocs(;
-    modules=[SMILES],
+    modules=[OpenSMILES],
     format=Documenter.HTML(),
     pages=[
         "Home" => "index.md",
