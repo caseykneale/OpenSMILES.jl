@@ -40,7 +40,7 @@ end
 end
 
 @testset "ParseOpenSMILES Checking Implicit Hydrogens on Simple Molecules" begin
-    _, Data = OpenSMILES.ParseOpenSMILES("CCCC(C)C")
+    _, Data = OpenSMILES.ParseSMILES("CCCC(C)C")
     checkhydrogens = Dict( OpenSMILES.countitems( OpenSMILES.H.( Data ) ) )
     @test checkhydrogens[1] == 1
     @test checkhydrogens[2] == 2
@@ -56,15 +56,15 @@ end
 
 @testset "ParseOpenSMILES Empirical Formulas of Complicated Molecules" begin
     #Anthracene
-    _, Data = OpenSMILES.ParseOpenSMILES("C1=CC=C2C=C3C=CC=CC3=CC2=C1")
+    _, Data = OpenSMILES.ParseSMILES("C1=CC=C2C=C3C=CC=CC3=CC2=C1")
     @test OpenSMILES.EmpiricalFormula( Data ) == "C14H10"
     #Tryptophan
-    _, Data = OpenSMILES.ParseOpenSMILES("C1=CC=C2C(=C1)C(=CN2)CC(C(=O)O)N")
+    _, Data = OpenSMILES.ParseSMILES("C1=CC=C2C(=C1)C(=CN2)CC(C(=O)O)N")
     @test OpenSMILES.EmpiricalFormula( Data ) == "C11H12N2O2"
     #Lysergic Acid Diethylamide
-    _, Data = OpenSMILES.ParseOpenSMILES("CCN(CC)C(=O)C1CN(C2CC3=CNC4=CC=CC(=C34)C2=C1)C")
+    _, Data = OpenSMILES.ParseSMILES("CCN(CC)C(=O)C1CN(C2CC3=CNC4=CC=CC(=C34)C2=C1)C")
     @test OpenSMILES.EmpiricalFormula( Data ) == "C20H25N3O"
     #Firefly Luciferin
-    _, Data = OpenSMILES.ParseOpenSMILES("O=C(O)[CH]1N=C(SC1)c2sc3cc(O)ccc3n2")
+    _, Data = OpenSMILES.ParseSMILES("O=C(O)[CH]1N=C(SC1)c2sc3cc(O)ccc3n2")
     @test OpenSMILES.EmpiricalFormula( Data ) == "C11H8N2O3S2"
 end
