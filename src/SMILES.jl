@@ -1,4 +1,4 @@
-module SMILES
+module OpenSMILES
     using SimpleWeightedGraphs, LightGraphs
     import Base: ==
     include("Elements.jl")
