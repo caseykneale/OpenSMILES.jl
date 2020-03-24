@@ -1,4 +1,4 @@
-using Documenter, SMILES
+using Documenter, OpenSMILES
 
 makedocs(;
     modules=[SMILES],
@@ -6,12 +6,12 @@ makedocs(;
     pages=[
         "Home" => "index.md",
     ],
-    repo="https://github.com/caseykneale/SMILES.jl/blob/{commit}{path}#L{line}",
-    sitename="SMILES.jl",
+    repo="https://github.com/caseykneale/OpenSMILES.jl/blob/{commit}{path}#L{line}",
+    sitename="OpenSMILES.jl",
     authors="Casey Kneale",
     assets=String[],
 )
 
 deploydocs(;
-    repo="github.com/caseykneale/SMILES.jl",
+    repo="github.com/caseykneale/OpenSMILES.jl",
 )
