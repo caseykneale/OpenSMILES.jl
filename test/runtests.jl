@@ -47,7 +47,7 @@ end
     @test checkhydrogens[3] == 3
 
     #Check a Ring
-    _, Data = OpenSMILES.ParseOpenSMILES("C1CCC(C)C1")
+    _, Data = OpenSMILES.ParseSMILES("C1CCC(C)C1")
     checkhydrogens = Dict( OpenSMILES.countitems( OpenSMILES.H.( Data ) ) )
     @test checkhydrogens[1] == 1
     @test checkhydrogens[2] == 4
