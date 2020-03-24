@@ -31,4 +31,4 @@ OpenSMILES.EmpiricalFormula( Data ) #C5H8
 ```
 ![Bowtie](https://raw.githubusercontent.com/caseykneale/SMILES.jl/master/output/Bowtie.png)
 
-Enjoy!
+Cool? Enjoy!
