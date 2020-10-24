@@ -1,4 +1,5 @@
 using OpenSMILES
+using LightGraphs
 using Test
 
 @testset "Read Next Element" begin
@@ -8,6 +9,7 @@ using Test
     @test OpenSMILES.ReadNextElement( "CO", OpenSMILES.bracket ) == ("C", "O")
     @test OpenSMILES.ReadNextElement( "C", OpenSMILES.bracket ) == ("C", "")
     @test OpenSMILES.ReadNextElement( "s", OpenSMILES.aromatics ) == ("s", "")
+    @test OpenSMILES.ReadNextElement( "Oc", [OpenSMILES.aliphatics; OpenSMILES.aromatics] ) == ("O", "c")
 end
 
 @testset "Read Next Numeric" begin
@@ -55,6 +57,13 @@ end
 end
 
 @testset "ParseOpenSMILES Empirical Formulas of Complicated Molecules" begin
+    #Phenol
+    g, Data = OpenSMILES.ParseSMILES("Oc1ccccc1")
+    @test OpenSMILES.EmpiricalFormula( Data ) == "C6H60"
+    for i = 1:6
+        @test has_edge(g, i+1, mod1(i-1, 6)+1)   # +1 is because O is the first atom
+        @test has_edge(g, i+1, mod1(i+1, 6)+1)   #              "
+    end
     #Anthracene
     _, Data = OpenSMILES.ParseSMILES("C1=CC=C2C=C3C=CC=CC3=CC2=C1")
     @test OpenSMILES.EmpiricalFormula( Data ) == "C14H10"
