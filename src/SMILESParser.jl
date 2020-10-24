@@ -70,7 +70,7 @@ function ParseSMILES( S::String, calculate_implicit_hydrogens = true )
                 end
             end
         elseif isbondoperator(cursor) #Handle bonds
-            weight = bonds[ string(cursor) ]
+            weight = bonds[ cursor ]
             S = S[ 2 : end ]
         end
         #New atom/moiety was parsed
