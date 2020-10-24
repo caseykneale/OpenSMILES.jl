@@ -66,7 +66,12 @@ function ParseBracket(S)
         elseif isspecialoperator(cursor)
             @warn("Invalid SMILES. Special operators(" * join(specialoperators, ",") * ") should not be contained in a bracket.")
         elseif isbondoperator(cursor)
-            @warn("Invalid SMILES. Bond operators(" * join(bondoperators, ",") * ") should not be contained in a bracket.")
+            if cursor == '@'
+                @warn("Chirality is not yet supported, ignoring @ operator", maxlog=1)
+                S = S[2:end]
+            else
+                @warn("Invalid SMILES. Bond operators(" * join(bondoperators, ",") * ") should not be contained in a bracket.")
+            end
         end
         #Ensure we don't get stuck in an infinite loop
         curlen = length( S )

@@ -54,6 +54,15 @@ end
     @test checkhydrogens[3] == 1
 end
 
+@testset "Chirality" begin
+    # Chirality is not fully supported, but we shouldn't error
+    G1, Data = OpenSMILES.ParseSMILES("N[C@](Br)(O)C")
+    @test OpenSMILES.EmpiricalFormula( Data ) == "BrC2H6NO"
+    G2, Data = OpenSMILES.ParseSMILES("N[C@@](Br)(C)O")
+    @test OpenSMILES.EmpiricalFormula( Data ) == "BrC2H6NO"
+    @test G1 == G2
+end
+
 @testset "ParseOpenSMILES Empirical Formulas of Complicated Molecules" begin
     #Anthracene
     _, Data = OpenSMILES.ParseSMILES("C1=CC=C2C=C3C=CC=CC3=CC2=C1")
