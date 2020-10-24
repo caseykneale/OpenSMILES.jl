@@ -1,33 +1,33 @@
-bondoperators = ["@", "-", "\\", "/", "=", "#", "\$"];
-specialoperators = [ ".", "]", "[", "(", ")"];
-operators = [ specialoperators;  bondoperators ];
+const bondoperators = ['@', '-', '\\', '/', '=', '#', '\$']
+const specialoperators = [ '.', ']', '[', '(', ')']
+const operators = [ specialoperators;  bondoperators ]
 
-bonds = Dict( "-" => 1, "\\" => 1, "/" => 1, "=" => 2, "#" => 3, "\$" => 4 );
-valence = Dict( "B" => 3, "C" => 4, "N" => 3, "O" => 2, "P" => 3,
-                "S" => 2, "F" => 1, "Cl" => 1, "Br" => 1, "I" => 1 );
+const bonds = Dict( '-' => 1, '\\' => 1, '/' => 1, '=' => 2, '#' => 3, '\$' => 4 )
+const valence = Dict( "B" => 3, "C" => 4, "N" => 3, "O" => 2, "P" => 3,
+                      "S" => 2, "F" => 1, "Cl" => 1, "Br" => 1, "I" => 1 )
 
-aliphatics  = ["B", "C", "N", "O", "S", "P", "F", "Cl", "Br", "I"];
-aromatics   = ["b", "c", "n", "o", "s", "p"];
+const aliphatics  = ["B", "C", "N", "O", "S", "P", "F", "Cl", "Br", "I"]
+const aromatics   = ["b", "c", "n", "o", "s", "p"]
 
-bracket = [ "H", "He" ,"Li", "Be", "B", "C", "N", "O", "F", "Ne", "Na",
-            "Al", "Si", "P", "S", "Cl", "Ar", "K", "Ca", "Sc", "Ti", "V", "Cr",
-            "Mn", "Fe", "Co", "Ni", "Cu", "Zn", "Ga", "Ge", "As", "Se", "Br",
-            "Kr", "Rb", "Sr", "Y", "Zr", "Nb", "Mo", "Tc", "Ru", "Rh", "Pd",
-            "Ag", "Cd", "In", "Sn", "Sb", "Te", "I", "Xe", "Cs", "Ba", "Hf",
-            "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg", "Tl", "Pb", "Bi",
-            "Po", "At", "Rn", "Fr", "Ra", "Rf", "Db", "Sg", "Bh", "Hs", "Mt",
-            "Ds", "Rg", "Cn", "Fl", "Lv", "La", "Ce", "Pr", "Nd", "Pm", "Sm",
-            "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm", "Yb", "Lu", "Ac", "Th",
-            "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm", "Md",
-            "No", "Lr", "Mg"];
+const bracket = [ "H", "He" ,"Li", "Be", "B", "C", "N", "O", "F", "Ne", "Na",
+                  "Al", "Si", "P", "S", "Cl", "Ar", "K", "Ca", "Sc", "Ti", "V", "Cr",
+                  "Mn", "Fe", "Co", "Ni", "Cu", "Zn", "Ga", "Ge", "As", "Se", "Br",
+                  "Kr", "Rb", "Sr", "Y", "Zr", "Nb", "Mo", "Tc", "Ru", "Rh", "Pd",
+                  "Ag", "Cd", "In", "Sn", "Sb", "Te", "I", "Xe", "Cs", "Ba", "Hf",
+                  "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg", "Tl", "Pb", "Bi",
+                  "Po", "At", "Rn", "Fr", "Ra", "Rf", "Db", "Sg", "Bh", "Hs", "Mt",
+                  "Ds", "Rg", "Cn", "Fl", "Lv", "La", "Ce", "Pr", "Nd", "Pm", "Sm",
+                  "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm", "Yb", "Lu", "Ac", "Th",
+                  "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm", "Md",
+                  "No", "Lr", "Mg"]
 
-bracket_aromatic = ["b", "c", "n", "o", "p", "s", "se", "as"];
+const bracket_aromatic = ["b", "c", "n", "o", "p", "s", "se", "as"]
 
-isoperator(x) = any( x .== [operators; Symbol.(operators); first.(operators) ] );
-isbondoperator(x) = any( x .== [bondoperators; Symbol.(bondoperators); first.(bondoperators) ] );
-isspecialoperator(x) = any( x .== [specialoperators; Symbol.(specialoperators); first.(specialoperators) ] );
-ispm(x) = any( x .== ["+", "-", :+, :-, '+', '-'] )
-FindNumerics( S::Vector{Char} ) = findall( isnumeric.( S ) );
+isoperator(x) = x ∈ operators
+isbondoperator(x) = x ∈ bondoperators
+isspecialoperator(x) = x ∈ specialoperators
+ispm(x) = x ∈ ('+', '-')
+FindNumerics( S::Vector{Char} ) = findall( isnumeric.( S ) )
 FindPMs( S::Vector{Char} ) = findall( ispm.( S ) )
 
 mutable struct Element

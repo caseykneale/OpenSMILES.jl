@@ -13,10 +13,8 @@ end
 Base.showerror(io::IO, e::BracketParseException) = print(io, "Failed to parse bracket(\"[$(e.bracketcontents)]\") on character ", e.charloc, "!")
 
 function ParseBracket(S)
-    Sorig = deepcopy(S)
-    origlen = length(S)
-    curlen = deepcopy(origlen)
-    lastlen = deepcopy(origlen)
+    Sorig = S
+    origlen = curlen = lastlen = length(S)
 
     state = ISOTOPE
     symbol, isotope, aromatic, ringID, hydrogens, charge = nothing, nothing, false, [], 0, 0
@@ -47,7 +45,7 @@ function ParseBracket(S)
                 elseif S[1] == 'H'
                     state = MULTIPLICITY
                     hydrogens = 1
-                    S = (length(S) > 1) ? S[2:end] : ""
+                    S = S[2:end]
                 else
                     @warn("Invalid SMILES. Bracket should contain one element (with or without Hydrogen).")
                 end
