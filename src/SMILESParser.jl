@@ -7,10 +7,8 @@ function ParseSMILES( S::String, calculate_implicit_hydrogens = true )
     MoleculeGraph = SimpleWeightedGraph();
     MolecularData = Element[]
 
-    Sorig = deepcopy(S)
-    origlen = length(S)
-    curlen = deepcopy(origlen)
-    lastlen = deepcopy(origlen)
+    Sorig = S
+    origlen = curlen = lastlen = length(S)
 
     chainstack = Int16[]
 
