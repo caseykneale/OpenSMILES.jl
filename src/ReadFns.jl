@@ -5,7 +5,7 @@ function ReadNextElement( S::String , List::Array{ String, 1 } )
         #See if the second char is lowercase
         if islowercase( S[ 2 ] ) && isuppercase( S[ 1 ] )
             if S[ 1:2 ] in List   # might fail if second letter is aromatic
-                return S[1:2], (length(S) > 2) ? S[3:end] : ""
+                return S[1:2], S[3:end]
             end
         end
         #Get list items 1 Char in length

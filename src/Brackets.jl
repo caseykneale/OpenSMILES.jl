@@ -45,7 +45,7 @@ function ParseBracket(S)
                 elseif S[1] == 'H'
                     state = MULTIPLICITY
                     hydrogens = 1
-                    S = (length(S) > 1) ? S[2:end] : ""
+                    S = S[2:end]
                 else
                     @warn("Invalid SMILES. Bracket should contain one element (with or without Hydrogen).")
                 end
