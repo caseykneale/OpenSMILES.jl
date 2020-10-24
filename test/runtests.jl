@@ -59,7 +59,7 @@ end
 @testset "ParseOpenSMILES Empirical Formulas of Complicated Molecules" begin
     #Phenol
     g, Data = OpenSMILES.ParseSMILES("Oc1ccccc1")
-    @test OpenSMILES.EmpiricalFormula( Data ) == "C6H60"
+    @test OpenSMILES.EmpiricalFormula( Data ) == "C6H6O"
     for i = 1:6
         @test has_edge(g, i+1, mod1(i-1, 6)+1)   # +1 is because O is the first atom
         @test has_edge(g, i+1, mod1(i+1, 6)+1)   #              "
