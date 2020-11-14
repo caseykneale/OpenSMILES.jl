@@ -111,34 +111,30 @@ function ParseSMILES( S::String, calculate_implicit_hydrogens = true )
         for ( i, atom ) in enumerate( MolecularData )
             #Find all edges with this atom.
             implicitH = 0
-            if atom.explicithydrogens == 0
-                #Lookup valence
-                if atom.symbol in keys( valence )
-                    Valence = valence[ atom.symbol ]
-                    BondedElectrons = sum( MoleculeGraph.weights[:,i].nzval )
-                    Aromaticity = (isa(atom.aromatic, Nothing) ? 0 : atom.aromatic)
-                    implicitH = Valence .- BondedElectrons .- Aromaticity
-                    #Look I'm not keeping track of non-bonding e- pairs
-                    #All I'm doing here is seeing if this is likely invalid structure...
-                    if length(implicitH) > 1
-                        if all( implicitH .< 0 )
-                            #Wiggle to find proper valence
-                            @warn("Illegal number of implicit hydrogens in $(atom.symbol) (Atom #$i). Defaulting to 0 hydrogens.")
-                            implicitH = 0
-                        else
-                            implicitH = implicitH[ implicitH .> 0 ]
-                            implicitH = reduce(min, implicitH .> 0)
-                        end
+            #Lookup valence
+            if atom.symbol in keys( valence )
+                Valence = valence[ atom.symbol ]
+                BondedElectrons = sum( MoleculeGraph.weights[:,i].nzval )
+                Aromaticity = (isa(atom.aromatic, Nothing) ? 0 : atom.aromatic)
+                implicitH = Valence .- BondedElectrons .- Aromaticity
+                #Look I'm not keeping track of non-bonding e- pairs
+                #All I'm doing here is seeing if this is likely invalid structure...
+                if length(implicitH) > 1
+                    if all( implicitH .< 0 )
+                        #Wiggle to find proper valence
+                        @warn("Illegal number of implicit hydrogens in $(atom.symbol) (Atom #$i). Defaulting to 0 hydrogens.")
+                        implicitH = 0
+                    else
+                        implicitH = implicitH[ implicitH .> 0 ]
+                        implicitH = reduce(min, implicitH .> 0)
                     end
-                else
-                    #Valence not known to package :/
-                    @warn("The valence for $(atom.symbol) isn't known, implicit hydrogens not determined.")
                 end
-            else #User specified hydrogens explicitly - use them.
-                implicitH = atom.explicithydrogens
+            else
+                #Valence not known to package :/
+                @warn("The valence for $(atom.symbol) isn't known, implicit hydrogens not determined.")
             end
-
-            MolecularData[i].implicithydrogens = implicitH
+            # implicitH >= atom.explicithydrogens || error("more hydrogens were supplied than supported by the valence in $Sorig (at $S)")
+            MolecularData[i].implicithydrogens = max(0, implicitH - atom.explicithydrogens)
         end
     end
 
