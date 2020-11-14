@@ -54,6 +54,10 @@ end
     @test checkhydrogens[1] == 1
     @test checkhydrogens[2] == 4
     @test checkhydrogens[3] == 1
+
+    # Atoms with multiple valence states (here, S)
+    _, Data = OpenSMILES.ParseSMILES("OS(=O)(=O)O")
+    @test OpenSMILES.EmpiricalFormula( Data ) == "H2O4S"
 end
 
 @testset "Chirality" begin
@@ -86,6 +90,14 @@ end
         _, Data = OpenSMILES.ParseSMILES(smiles)
         @test OpenSMILES.EmpiricalFormula( Data ) == "BrCClCoFH4IS"
     end
+
+    # Hydrogens as bracket atoms are equivalent to Hcount hydrogens
+    strh = "N[C@H](O)C"                 # hcount
+    strb = "N[C@]([H])(O)C"             # bracket
+    _, Data = OpenSMILES.ParseSMILES(strh)
+    @test OpenSMILES.EmpiricalFormula( Data ) == "C2H7NO"
+    _, Data = OpenSMILES.ParseSMILES(strb)
+    @test OpenSMILES.EmpiricalFormula( Data ) == "C2H7NO"
 end
 
 @testset "ParseOpenSMILES Empirical Formulas of Complicated Molecules" begin
