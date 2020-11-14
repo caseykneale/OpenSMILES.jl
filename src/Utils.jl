@@ -7,12 +7,10 @@ function countitems(x)
 end
 
 function EmpiricalFormula(data::Array{Element, 1} )
-    Hydrogens = sum( H.( data ) )
     countem = Dict(countitems( abbreviation.( data ) ))
-    if "H" in keys( countem )
-        countem["H"] += Hydrogens
-    else
-        countem["H"] = Hydrogens
+    nhydrogens = sum( H.( data ) )
+    if nhydrogens > 0
+        countem["H"] = get(countem, "H", 0) + nhydrogens
     end
     sortem = sort( collect( keys( countem ) ) )
     return join([ (countem[ele] == 1) ? ele : ele * string( countem[ele] ) for ele in sortem])

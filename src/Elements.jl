@@ -4,7 +4,8 @@ const operators = [ specialoperators;  bondoperators ]
 
 const bonds = Dict( '-' => 1, '\\' => 1, '/' => 1, '=' => 2, '#' => 3, '\$' => 4 )
 const valence = Dict( "B" => 3, "C" => 4, "N" => 3, "O" => 2, "P" => 3,
-                      "S" => 2, "F" => 1, "Cl" => 1, "Br" => 1, "I" => 1 )
+                      "S" => 2, "F" => 1, "Cl" => 1, "Br" => 1, "I" => 1,
+                      "H" => 1, "Po" => 4, "As" => 5, "Co" => 6)
 
 const aliphatics  = ["B", "C", "N", "O", "S", "P", "F", "Cl", "Br", "I"]
 const aromatics   = ["b", "c", "n", "o", "s", "p"]
@@ -23,10 +24,10 @@ const bracket = [ "H", "He" ,"Li", "Be", "B", "C", "N", "O", "F", "Ne", "Na",
 
 const bracket_aromatic = ["b", "c", "n", "o", "p", "s", "se", "as"]
 
-isoperator(x) = x ∈ operators
-isbondoperator(x) = x ∈ bondoperators
-isspecialoperator(x) = x ∈ specialoperators
-ispm(x) = x ∈ ('+', '-')
+isoperator(x::AbstractChar) = x ∈ operators
+isbondoperator(x::AbstractChar) = x ∈ bondoperators
+isspecialoperator(x::AbstractChar) = x ∈ specialoperators
+ispm(x::AbstractChar) = x ∈ ('+', '-')
 FindNumerics( S::Vector{Char} ) = findall( isnumeric.( S ) )
 FindPMs( S::Vector{Char} ) = findall( ispm.( S ) )
 

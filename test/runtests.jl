@@ -58,11 +58,34 @@ end
 
 @testset "Chirality" begin
     # Chirality is not fully supported, but we shouldn't error
-    G1, Data = OpenSMILES.ParseSMILES("N[C@](Br)(O)C")
-    @test OpenSMILES.EmpiricalFormula( Data ) == "BrC2H6NO"
-    G2, Data = OpenSMILES.ParseSMILES("N[C@@](Br)(C)O")
-    @test OpenSMILES.EmpiricalFormula( Data ) == "BrC2H6NO"
-    @test G1 == G2
+    # Tetrahedral
+    for smiles in ("N[C@](Br)(O)C", "N[C@TH1](Br)(O)C", "N[C@@](Br)(O)C", "N[C@TH2](Br)(O)C")
+        _, Data = OpenSMILES.ParseSMILES(smiles)
+        @test OpenSMILES.EmpiricalFormula( Data ) == "BrC2H6NO"
+    end
+    # Allenal
+    for smiles in ("NC(Br)=[C@]=C(O)C", "NC(Br)=[C@AL1]=C(O)C", "NC(Br)=[C@@]=C(O)C", "NC(Br)=[C@AL2]=C(O)C")
+        _, Data = OpenSMILES.ParseSMILES(smiles)
+        @test OpenSMILES.EmpiricalFormula( Data ) == "BrC4H6NO"
+    end
+    # Square-planar
+    for smiles in ("F[Po@SP1](Cl)(Br)I", "F[Po@SP2](Cl)(Br)I", "F[Po@SP3](Cl)(Br)I")
+        _, Data = OpenSMILES.ParseSMILES(smiles)
+        @test OpenSMILES.EmpiricalFormula( Data ) == "BrClFIPo"
+    end
+    # Trigonal-bipyramidal
+    for smiles in ("S[As@TB1](F)(Cl)(Br)N", "S[As@TB2](Br)(Cl)(F)N", "S[As@TB5](F)(N)(Cl)Br", "F[As@TB10](S)(Cl)(N)Br",
+                   "F[As@TB15](Cl)(S)(Br)N", "Br[As@TB20](Cl)(S)(F)N")
+        _, Data = OpenSMILES.ParseSMILES(smiles)
+        @test OpenSMILES.EmpiricalFormula( Data ) == "AsBrClFH3NS"
+    end
+    # Octahedral
+    for smiles in ("C[Co@](F)(Cl)(Br)(I)S", "F[Co@@](S)(I)(C)(Cl)Br", "S[Co@OH5](F)(I)(Cl)(C)Br",
+                   "Br[Co@OH9](C)(S)(Cl)(F)I", "Br[Co@OH12](Cl)(I)(F)(S)C", "Cl[Co@OH15](C)(Br)(F)(I)S",
+                   "Cl[Co@OH19](C)(I)(F)(S)Br", "I[Co@OH27](Cl)(Br)(F)(S)C")
+        _, Data = OpenSMILES.ParseSMILES(smiles)
+        @test OpenSMILES.EmpiricalFormula( Data ) == "BrCClCoFH4IS"
+    end
 end
 
 @testset "ParseOpenSMILES Empirical Formulas of Complicated Molecules" begin
