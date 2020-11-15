@@ -8,7 +8,7 @@
 [![Build Status](https://api.cirrus-ci.com/github/caseykneale/OpenSMILES.jl.svg)](https://cirrus-ci.com/github/caseykneale/OpenSMILES.jl)
 
 
-This is a SMILES parser in Julia following the OpenSMILES format (to the best of my ability). Theres probably bugs, this isn't inventive its just a parser that turns SMILES into a weighted LightGraphs graph. Contributions welcome!
+This is a SMILES parser in Julia that aims to follow the [OpenSMILES format](http://opensmiles.org/opensmiles.html) (to the best of my ability). Theres probably bugs, this isn't inventive its just a parser that turns SMILES into a weighted LightGraphs graph. Contributions welcome!
 
 # Examples
 

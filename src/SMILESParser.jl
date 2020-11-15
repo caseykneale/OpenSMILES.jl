@@ -1,56 +1,58 @@
 struct SMILESParseException <: Exception
-    charloc::Int64
+    msg::String
+    smiles::String
+    charloc::Int
 end
 Base.showerror(io::IO, e::SMILESParseException) = print(io, "Failed to parse SMILES on character ", e.charloc, "!")
 
-function ParseSMILES( S::String, calculate_implicit_hydrogens = true )
+function ParseSMILES(s::AbstractString, calculate_implicit_hydrogens = true )
     MoleculeGraph = SimpleWeightedGraph();
     MolecularData = Element[]
 
-    Sorig = S
-    origlen = curlen = lastlen = length(S)
+    len = length(s)
 
     chainstack = Int16[]
 
     nextedgestart = 0
     weight = 1
     lastcursor = 0
-    RingClosures = Dict()
+    RingClosures = Dict{Int,Vector{Int}}()
 
-    while curlen > 0
+    idx = 1
+    while idx <= len
         moiety = nothing
-        cursor = S[1]
+        cursor = s[idx]
 
-        if isdigit( cursor )  #Handle rings
-            id = parse(Int16, cursor)
+        if isdigit(cursor) || cursor == '%' #Handle rings
+            if isdigit(cursor)
+                # Single-digit ring id
+                id = Int16(cursor - '0')
+                idx = nextind(s, idx)
+            else
+                # Two-digit ring id
+                id = parse(Int16, s[idx+1:idx+2])
+                idx += 3
+            end
             push!( MolecularData[end].ringID, id )
             if id in keys( RingClosures )
                 push!( RingClosures[ id ], length(MolecularData) )
             else
                 RingClosures[ id ] = [ length(MolecularData) ]
             end
-            S = S[ 2 : end]
-        elseif cursor == '%'#2 decimal ring
-            push!(MolecularData[end].ringID, parse(Int16, S[ (BracketClose+1) : (BracketClose+2) ] ) )
-            S = S[ 4 : end]
         elseif isletter( cursor )
             symbollist = isuppercase( cursor ) ? aliphatics : aromatics
             aromatic = islowercase( cursor )
-            symbol, S = ReadNextElement( S, symbollist )
+            symbol, idx = tryparseelement(s, idx, symbollist)
             if isa(symbol, Nothing)
-                @warn("Invalid SMILES. Unrecognized chemical symbol.")
-            else
-                moiety = Element(symbol)
+                throw(SMILESParseException("Invalid SMILES. Unrecognized chemical symbol.", s, idx))
             end
+            moiety = Element(symbol)
         elseif isspecialoperator(cursor)    #Handle operators
             if cursor == '['
-                BracketClose = findfirst( [ s == ']' for s in S ] ) - 1
-                if (BracketClose > 0) && !isa(BracketClose, Nothing)
-                    moiety = ParseBracket( S[ 2 : BracketClose ] )
-                    S = S[ (BracketClose+2) : end]
-                else
-                    @warn("Invalid SMILES. Bracket is either empty, or does not end.")
-                end
+                idxclose = findnext(']', s, idx)
+                idxclose === nothing && throw(SMILESParseException("Invalid SMILES. Bracket is either empty, or does not end.", s, idx))
+                moiety = ParseBracket(SubString(s, idx+1, idxclose-1))
+                idx = nextind(s, idxclose)
             end
             if cursor == '('
                 if lastcursor == 0
@@ -58,32 +60,28 @@ function ParseSMILES( S::String, calculate_implicit_hydrogens = true )
                 else
                     push!( chainstack, lastcursor  )
                 end
-                S = S[ 2 : end ]
+                idx = nextind(s, idx)
             end
             if cursor == ')'
-                if length(chainstack) > 0
-                    S = S[ 2 : end ]
-                    nextedgestart = pop!( chainstack )
-                    lastcursor = nextedgestart
-                else
-                    @warn("Invalid SMILES. Parenthesis/chain does not have a beginning.")
-                end
+                isempty(chainstack) && throw(SMILESParseException("Invalid SMILES. Parenthesis/chain does not have a beginning.", s, idx))
+                idx = nextind(s, idx)
+                lastcursor = nextedgestart = pop!( chainstack )
             end
         elseif isbondoperator(cursor) #Handle bonds
             weight = bonds[ cursor ]
-            S = S[ 2 : end ]
+            idx = nextind(s, idx)
         end
         #New atom/moiety was parsed
         if isa( moiety, Element )
             lastcursor = 0
             add_vertex!( MoleculeGraph )
             push!( MolecularData, moiety )
-            len = length( MolecularData )
-            if (len > 1)
+            l = length( MolecularData )
+            if (l > 1)
                 if nextedgestart == 0
-                    add_edge!(MoleculeGraph, len - 1, len, weight )
+                    add_edge!(MoleculeGraph, l - 1, l, weight )
                 else
-                    add_edge!(MoleculeGraph, nextedgestart, len, weight )
+                    add_edge!(MoleculeGraph, nextedgestart, l, weight )
                     nextedgestart = 0
                 end
                 if weight > 1
@@ -91,12 +89,6 @@ function ParseSMILES( S::String, calculate_implicit_hydrogens = true )
                 end
             end
         end
-        #Ensure we don't get stuck in an infinite loop
-        curlen = length( S )
-        if lastlen == curlen
-            throw(SMILESParseException( (origlen - curlen + 1) ))
-        end
-        lastlen = curlen
     end
     #Close rings!
     for (k, v) in RingClosures
