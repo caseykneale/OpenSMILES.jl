@@ -6,7 +6,7 @@ module OpenSMILES
             aliphatics, aromatics, bracket, bracket_aromatic, isoperator,
             isbondoperator, isspecialoperator, ispm, FindNumerics, FindPMs,
             Element, GraphElement, abbreviation, implicitH, explicitH, H,
-            charge, isotope, ==
+            charge, isotope, ==, instantiate_hydrogens
 
     include("ReadFns.jl")
     export ReadNextElement, ReadNextNumeric, ReadNextCharge
