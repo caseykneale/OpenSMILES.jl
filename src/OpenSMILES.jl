@@ -20,4 +20,5 @@ module OpenSMILES
     include("Utils.jl")
     export WeightedToSimple, countitems
 
+    include("deprecations.jl")
 end

@@ -3,28 +3,32 @@ using LightGraphs
 using Test
 
 @testset "Read Next Element" begin
-    @test OpenSMILES.ReadNextElement( "ScC", OpenSMILES.bracket ) == ("Sc", "C")
-    @test OpenSMILES.ReadNextElement( "ScAs", OpenSMILES.bracket ) == ("Sc", "As")
-    @test OpenSMILES.ReadNextElement( "Sc", OpenSMILES.bracket ) == ("Sc", "")
-    @test OpenSMILES.ReadNextElement( "CO", OpenSMILES.bracket ) == ("C", "O")
-    @test OpenSMILES.ReadNextElement( "C", OpenSMILES.bracket ) == ("C", "")
-    @test OpenSMILES.ReadNextElement( "s", OpenSMILES.aromatics ) == ("s", "")
-    @test OpenSMILES.ReadNextElement( "Oc", [OpenSMILES.aliphatics; OpenSMILES.aromatics] ) == ("O", "c")
+    @test OpenSMILES.tryparseelement( "ScC", 1, OpenSMILES.bracket ) == ("Sc", 3)
+    @test OpenSMILES.tryparseelement( "ScAs", 1, OpenSMILES.bracket ) == ("Sc", 3)
+    @test OpenSMILES.tryparseelement( "ScAs", 3, OpenSMILES.bracket ) == ("As", 5)
+    @test OpenSMILES.tryparseelement( "Sc", 1, OpenSMILES.bracket ) == ("Sc", 3)
+    @test OpenSMILES.tryparseelement( "CO", 1, OpenSMILES.bracket ) == ("C", 2)
+    @test OpenSMILES.tryparseelement( "C", 1, OpenSMILES.bracket ) == ("C", 2)
+    @test OpenSMILES.tryparseelement( "s", 1, OpenSMILES.aromatics ) == ("s", 2)
+    @test OpenSMILES.tryparseelement( "Oc", 1, [OpenSMILES.aliphatics; OpenSMILES.aromatics] ) == ("O", 2)
 end
 
 @testset "Read Next Numeric" begin
-    @test OpenSMILES.ReadNextNumeric("123UrC") == (123, "UrC")
-    @test OpenSMILES.ReadNextNumeric("UrC") == (nothing, "UrC")
-    @test OpenSMILES.ReadNextNumeric("12CH4") == (12, "CH4")
+    @test OpenSMILES.tryparseint16("123UrC", 1) == (123, 4)
+    @test OpenSMILES.tryparseint16("UrC", 1) == (nothing, 1)
+    @test OpenSMILES.tryparseint16("12CH4", 1) == (12, 3)
+    @test OpenSMILES.tryparseint16("12CH4", 5) == (4, 6)
 end
 
 @testset "Read Next Charge" begin
-    @test OpenSMILES.ReadNextCharge("+") == (1, "")
-    @test OpenSMILES.ReadNextCharge("-") == (-1, "")
-    @test OpenSMILES.ReadNextCharge("+++") == (3, "")
-    @test OpenSMILES.ReadNextCharge("---") == (-3, "")
-    @test OpenSMILES.ReadNextCharge("+2") == (2, "")
-    @test OpenSMILES.ReadNextCharge("-2") == (-2, "")
+    @test OpenSMILES.tryparsecharge("+", 1) == (1, 2)
+    @test OpenSMILES.tryparsecharge("-", 1) == (-1, 2)
+    @test OpenSMILES.tryparsecharge("+++", 1) == (3, 4)
+    @test OpenSMILES.tryparsecharge("---", 1) == (-3, 4)
+    @test OpenSMILES.tryparsecharge("+2", 1) == (2, 3)
+    @test OpenSMILES.tryparsecharge("-2", 1) == (-2, 3)
+    @test OpenSMILES.tryparsecharge("Na+Cl-", 3) == ( 1, 4)
+    @test OpenSMILES.tryparsecharge("Na+Cl-", 6) == (-1, 7)
 end
 
 @testset "Brackets Known" begin
@@ -98,6 +102,13 @@ end
     @test OpenSMILES.EmpiricalFormula( Data ) == "C2H7NO"
     _, Data = OpenSMILES.ParseSMILES(strb)
     @test OpenSMILES.EmpiricalFormula( Data ) == "C2H7NO"
+end
+
+@testset "Ring identifiers" begin
+    # spiro[5.5]undecane, https://pubchem.ncbi.nlm.nih.gov/#query=spiro%5B5.5%5Dundecane
+    g1, elms1 = ParseSMILES("C12(CCCCC1)CCCCC2")     # single-digit ring identifiers
+    g2, elms2 = ParseSMILES("C%012(CCCCC%01)CCCCC2") # two-digit ring identifiers
+    @test g1 == g2 && elms1 == elms2
 end
 
 @testset "ParseOpenSMILES Empirical Formulas of Complicated Molecules" begin

@@ -1,30 +1,11 @@
-#Returns next element symbol and returns SMILES string one element fewer.
-function ReadNextElement( S::String , List::Array{ String, 1 } )
-    NextElement = nothing
-    if length( S ) > 1
-        #See if the second char is lowercase
-        if islowercase( S[ 2 ] ) && isuppercase( S[ 1 ] )
-            if S[ 1:2 ] in List   # might fail if second letter is aromatic
-                return S[1:2], S[3:end]
-            end
-        end
-        #Get list items 1 Char in length
-        AvailableList = List[ length.( List ) .== 1 ]
-        if string(S[ 1 ]) in AvailableList
-            NextElement = string(S[ 1 ])
-            S = S[2:end]
-        end
-    elseif length(S) == 1
-        #Get list items 1 Char in length
-        AvailableList = List[ length.( List ) .== 1 ]
-        if S in AvailableList
-            NextElement = S
-            S = ""
-        end
-    end
-    return NextElement, S
-end
+"""
+    symbol, idxnext = tryparseelement(s, idx, elements)
 
+Extract the element symbol starting at position `idx` in `s`. It must be one of the items in `elements`.
+
+`symbol` is the element symbol (a string), or `nothing` if no valid element can be found.
+`idxnext` is the first position in `s` after the parsed element.
+"""
 function tryparseelement(s::AbstractString, idx::Int, elements)
     len = length(s)
     idx > len && return nothing, idx
@@ -43,24 +24,14 @@ function tryparseelement(s::AbstractString, idx::Int, elements)
     return nothing, idx
 end
 
-#Fn for parsing the inside of a bracket...
-function ReadNextNumeric(S::String)
-    len = length(S)
-    Sc = Vector{Char}(S)
-    isotope = nothing
-    if isdigit( Sc[ 1 ] )
-        offset = findfirst( isdigit.( Sc ) .== false )
-        if isa(offset, Nothing)
-            isotope = parse( Int16, S[ 1:end ] )
-            S = ""
-        else
-            isotope = parse( Int16, S[ 1 : ( offset - 1 ) ] )
-            S = S[ offset : end ]
-        end
-    end
-    return isotope, S
-end
+"""
+    i, idxnext = tryparseint16(s, idx)
 
+Parse an `Int16` starting at position `idx` in `s`.
+
+`i` is the `Int16` value, or `nothing` if `s` does not contain an integer starting at `idx`.
+`idxnext` is the first position in `s` after the parsed integer.
+"""
 function tryparseint16(s::AbstractString, idx::Int)
     len = length(s)
     lastidx = prevind(s, idx)
@@ -72,24 +43,14 @@ function tryparseint16(s::AbstractString, idx::Int)
     return lastidx >= idx ? (parse(Int16, SubString(s, idx, lastidx)), nextind(s, lastidx)) : (nothing, idx)
 end
 
-function ReadNextCharge(S::String)
-    len = length(S)
-    charge = nothing
-    if len == 1
-        charge = Int( "+" == S ) - Int( "-" == S )
-    else
-        Sc = Vector{Char}( S )
-        if all( [ isdigit( s ) for s in S[ 2:end ] ] )
-            charge = parse( Int16, S[ 1:end ] )
-        elseif all( [ ispm( s ) for s in S ] )
-            charge = sum( '+' .== Sc ) - sum( '-' .== Sc )
-        else
-            @warn("Invalid SMILES. Charge representation should be final attribute in a bracket. Or unacceptable mixed charge notation.")
-        end
-    end
-    return charge, ""
-end
+"""
+    z, idxnext = tryparseint16(s, idx)
 
+Parse charge state (as an `Int`) starting at position `idx` in `s`.
+
+`z` is the charge, or `nothing` if `s` does not contain a charge starting at `idx`.
+`idxnext` is the first position in `s` after the parsed charge.
+"""
 function tryparsecharge(s::AbstractString, idx::Int)
     len = length(s)
     idx > len && return nothing, idx
