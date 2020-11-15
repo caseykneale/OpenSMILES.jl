@@ -49,12 +49,16 @@ function Element(symbol::String)
     end
 end
 
+Element(e::Element) = Element(e.symbol, e.isotope, e.aromatic, copy(e.ringID), e.explicithydrogens, e.implicithydrogens, e.charge)
+
 function Base.:(==)(a::Element, b::Element)
     return all( [ a.symbol == b.symbol, a.isotope == b.isotope,
                 a.aromatic == b.aromatic, a.ringID == b.ringID,
                 a.explicithydrogens == b.explicithydrogens,
                 a.charge == b.charge])
 end
+
+Base.copy(e::Element) = Element(e)
 
 #immutable struct to hold elemental information - less memory then "Element"
 struct GraphElement
