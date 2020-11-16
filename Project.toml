@@ -1,6 +1,6 @@
 name = "OpenSMILES"
 uuid = "29c4880b-f2d1-40f2-9463-012547100b04"
-authors = ["Casey Kneale"]
+authors = ["Casey Kneale", "Tim Holy]
 version = "0.1.0"
 
 [deps]
