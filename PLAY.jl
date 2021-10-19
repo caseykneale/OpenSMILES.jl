@@ -1,7 +1,7 @@
 push!(LOAD_PATH, "/home/caseykneale/Desktop/OpenSMILES.jl/");
 import SMILES
 using Pkg
-import Compose, GraphPlot, LightGraphs, PeriodicTable
+import Compose, GraphPlot, Graphs, PeriodicTable
 #Tryptophan
 Graph, Data = SMILES.ParseSMILES("C1=CC=C2C(=C1)C(=CN2)CC(C(=O)O)N")
 #Bowtie

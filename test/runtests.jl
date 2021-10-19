@@ -1,5 +1,5 @@
 using OpenSMILES
-using LightGraphs
+using Graphs
 using Test
 
 @testset "Read Next Element" begin
