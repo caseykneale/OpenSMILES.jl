@@ -1,5 +1,5 @@
 module OpenSMILES
-    using SimpleWeightedGraphs, LightGraphs
+    using SimpleWeightedGraphs, Graphs
     import Base: ==
     include("Elements.jl")
     export bondoperators, specialoperators, operators, bonds, valence,
