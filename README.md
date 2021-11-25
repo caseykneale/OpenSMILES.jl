@@ -1,8 +1,9 @@
 # OpenSMILES.jl
+| **Documentation**                                                               | **Build Status**                                                                                |
+|:-------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------:|
+[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://caseykneale.github.io/OpenSMILES.jl/stable) | [![Build Status](https://travis-ci.com/caseykneale/OpenSMILES.jl.svg?branch=master)](https://travis-ci.com/caseykneale/OpenSMILES.jl)
 
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://caseykneale.github.io/OpenSMILES.jl/stable)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://caseykneale.github.io/OpenSMILES.jl/dev)
-[![Build Status](https://travis-ci.com/caseykneale/OpenSMILES.jl.svg?branch=master)](https://travis-ci.com/caseykneale/OpenSMILES.jl)
 [![Codecov](https://codecov.io/gh/caseykneale/OpenSMILES.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/caseykneale/OpenSMILES.jl)
 
 
