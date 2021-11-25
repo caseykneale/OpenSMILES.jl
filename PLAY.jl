@@ -10,5 +10,3 @@ Graph, Data = OpenSMILES.ParseSMILES("C1=CC=C2C(=C1)C(=CN2)CC(C(=O)O)N")
 Graph, Data = OpenSMILES.ParseSMILES("C1CC12CC2")
 
 GraphPlot.gplot( OpenSMILES.WeightedToSimple( Graph ), nodelabel = OpenSMILES.abbreviation.( Data ) )
-
-SMILES.EmpiricalFormula( Data )

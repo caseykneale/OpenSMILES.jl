@@ -116,8 +116,8 @@ end
     g, Data = OpenSMILES.ParseSMILES("Oc1ccccc1")
     @test OpenSMILES.EmpiricalFormula( Data ) == "C6H6O"
     for i = 1:6
-        @test has_edge(g, i+1, mod1(i-1, 6)+1)   # +1 is because O is the first atom
-        @test has_edge(g, i+1, mod1(i+1, 6)+1)   #              "
+        @test SimpleWeightedGraphs.has_edge(g, i+1, mod1(i-1, 6)+1)   # +1 is because O is the first atom
+        @test SimpleWeightedGraphs.has_edge(g, i+1, mod1(i+1, 6)+1)   #              "
     end
     #Anthracene
     _, Data = OpenSMILES.ParseSMILES("C1=CC=C2C=C3C=CC=CC3=CC2=C1")
@@ -146,7 +146,7 @@ end
     @test atomnodesH[1].symbol == "O"
     @test atomnodesH[2].symbol == "H"
     @test atomnodesH[3].symbol == "H"
-    @test has_edge(gH, 1, 2) && has_edge(gH, 1, 3) && !has_edge(gH, 2, 3)
+    @test SimpleWeightedGraphs.has_edge(gH, 1, 2) && SimpleWeightedGraphs.has_edge(gH, 1, 3) && !SimpleWeightedGraphs.has_edge(gH, 2, 3)
     @test OpenSMILES.EmpiricalFormula(atomnodesH) == "H2O"
 
     g, atomnodes = OpenSMILES.ParseSMILES("[H]O[H]")
