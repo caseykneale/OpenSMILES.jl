@@ -138,11 +138,11 @@ end
     g, atomnodes = OpenSMILES.ParseSMILES("O")
     gH, atomnodesH = instantiate_hydrogens(g, atomnodes)
     # Ensure the input is not modified
-    @test nv(g) == 1
+    @test SimpleWeightedGraphs.nv(g) == 1
     @test length(atomnodes) == 1 && atomnodes[1].symbol == "O"
     @test OpenSMILES.EmpiricalFormula(atomnodes) == "H2O"
     # Check the instantiated version
-    @test nv(gH) == 3
+    @test SimpleWeightedGraphs.nv(gH) == 3
     @test length(atomnodesH) == 3
     @test atomnodesH[1].symbol == "O"
     @test atomnodesH[2].symbol == "H"

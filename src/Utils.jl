@@ -23,15 +23,15 @@ Given a molecule, where `g` is the connectivity graph and `atomnodes` contains a
 information about the vertices, return a new representation `gH, atomnodesH` where all hydrogens
 in `g`, `atomnodes` have been instantiated as full nodes in `gH, atomnodesH`.
 """
-function instantiate_hydrogens(g::AbstractGraph, atomnodes::AbstractVector{Element})
+function instantiate_hydrogens(g, atomnodes::AbstractVector{Element})
     gH, atomnodesH = copy(g), [copy(atom) for atom in atomnodes]
     nhydrogens = sum(H, atomnodes)
     nhydrogens == 0 && return gH, atomnodesH
-    lastH = nv(g)
-    add_vertices!(gH, nhydrogens)
+    lastH = SimpleWeightedGraphs.nv(g)
+    SimpleWeightedGraphs.add_vertices!(gH, nhydrogens)
     for (i, atom) in enumerate(atomnodesH)
         for _ = 1:H(atom)
-            add_edge!(gH, i, lastH += 1)
+            SimpleWeightedGraphs.add_edge!(gH, i, lastH += 1)
         end
         atom.explicithydrogens = atom.implicithydrogens = 0
     end
