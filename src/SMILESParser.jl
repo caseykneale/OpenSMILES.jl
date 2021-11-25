@@ -74,14 +74,14 @@ function ParseSMILES(s::AbstractString, calculate_implicit_hydrogens = true )
         #New atom/moiety was parsed
         if isa( moiety, Element )
             lastcursor = 0
-            add_vertex!( MoleculeGraph )
+            SimpleWeightedGraphs.add_vertex!( MoleculeGraph )
             push!( MolecularData, moiety )
             l = length( MolecularData )
             if (l > 1)
                 if nextedgestart == 0
-                    add_edge!(MoleculeGraph, l - 1, l, weight )
+                    SimpleWeightedGraphs.add_edge!(MoleculeGraph, l - 1, l, weight )
                 else
-                    add_edge!(MoleculeGraph, nextedgestart, l, weight )
+                    SimpleWeightedGraphs.add_edge!(MoleculeGraph, nextedgestart, l, weight )
                     nextedgestart = 0
                 end
                 if weight > 1
@@ -94,7 +94,7 @@ function ParseSMILES(s::AbstractString, calculate_implicit_hydrogens = true )
     for (k, v) in RingClosures
         for id in 1 : ( length( v ) - 1 )
             if ( v[id+1] - v[id] ) != -1
-                add_edge!(MoleculeGraph, v[id], v[id+1])
+                SimpleWeightedGraphs.add_edge!(MoleculeGraph, v[id], v[id+1])
             end
         end
     end

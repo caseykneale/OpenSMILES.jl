@@ -1,4 +1,4 @@
-WeightedToSimple(graph) = Graphs.Graph( SimpleWeightedGraphs.adjacency_matrix( graph ) )
+WeightedToSimple(graph) = LightGraphs.Graph( SimpleWeightedGraphs.adjacency_matrix( graph ) )
 
 function countitems(x)
     un = unique(x)
