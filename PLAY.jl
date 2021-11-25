@@ -12,4 +12,3 @@ GraphPlot.gplot( SMILES.WeightedToSimple( Graph ), nodelabel = SMILES.abbreviati
 SMILES.EmpiricalFormula( Data )
 
 #Data
-git remote set-url origin git@github.com:caseykneale/OpenSMILES.jl.git
