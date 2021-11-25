@@ -4,8 +4,7 @@
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://caseykneale.github.io/OpenSMILES.jl/dev)
 [![Build Status](https://travis-ci.com/caseykneale/OpenSMILES.jl.svg?branch=master)](https://travis-ci.com/caseykneale/OpenSMILES.jl)
 [![Codecov](https://codecov.io/gh/caseykneale/OpenSMILES.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/caseykneale/OpenSMILES.jl)
-[![Coveralls](https://coveralls.io/repos/github/caseykneale/OpenSMILES.jl/badge.svg?branch=master)](https://coveralls.io/github/caseykneale/OpenSMILES.jl?branch=master)
-[![Build Status](https://api.cirrus-ci.com/github/caseykneale/OpenSMILES.jl.svg)](https://cirrus-ci.com/github/caseykneale/OpenSMILES.jl)
+
 
 
 This is a SMILES parser in Julia that aims to follow the [OpenSMILES format](http://opensmiles.org/opensmiles.html) (to the best of my ability). Theres probably bugs, this isn't inventive its just a parser that turns SMILES into a weighted Graphs.jl graph. Contributions welcome!
