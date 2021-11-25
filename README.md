@@ -18,7 +18,7 @@ using OpenSMILES, GraphPlot
 
 # Tryptophan
 Graph, Data = OpenSMILES.ParseSMILES("C1=CC=C2C(=C1)C(=CN2)CC(C(=O)O)N")
-GraphPlot.gplot( OpenSMILES.WeightedToSimple( Graph ), nodelabel = OpenSMILES.abbreviation.( Data ) )
+GraphPlot.gplot( Graph, nodelabel = OpenSMILES.abbreviation.( Data ) )
 OpenSMILES.EmpiricalFormula( Data ) # C11H12N2O2
 ```
 ![Tryptophan](https://raw.githubusercontent.com/caseykneale/OpenSMILES.jl/master/output/Tryptophan.png)
@@ -26,7 +26,7 @@ OpenSMILES.EmpiricalFormula( Data ) # C11H12N2O2
 ```Julia
 # Bowtie ( not a real molecule :P )
 Graph, Data = OpenSMILES.ParseSMILES("C1CC12CC2")
-GraphPlot.gplot( OpenSMILES.WeightedToSimple( Graph ), nodelabel = OpenSMILES.abbreviation.( Data ) )
+GraphPlot.gplot( Graph, nodelabel = OpenSMILES.abbreviation.( Data ) )
 OpenSMILES.EmpiricalFormula( Data ) #C5H8
 ```
 ![Bowtie](https://raw.githubusercontent.com/caseykneale/OpenSMILES.jl/master/output/Bowtie.png)
