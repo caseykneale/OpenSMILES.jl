@@ -8,7 +8,7 @@
 This is a SMILES parser in Julia that aims to follow the [OpenSMILES format](http://opensmiles.org/opensmiles.html) (to the best of my ability). Theres probably bugs, this isn't inventive its just a parser that turns SMILES into a weighted Graphs.jl graph. Contributions welcome!
 
 # Notice
-Although this package does mostly what it intends too (still missing chiral support, etc), an excellent package [MolecularGraph](https://github.com/mojaie/MolecularGraph.jl) has been released. It is highly reccommended users contribute to that package instead of this one, unless they specifically want Graphs.jl integration.
+Although this package does mostly what it intends too (still missing chiral support, etc), an excellent package [MolecularGraph](https://github.com/mojaie/MolecularGraph.jl) has been released. It is highly reccommended users contribute to that package instead of this one, unless they specifically want LightGraphs.jl(or Graphs.jl) integration.
 
 # Examples
 
